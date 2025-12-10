@@ -6,6 +6,8 @@ interface UserPayload {
   email: string;
   name?: string;
   role: "admin" | "user" | "driver";
+  phone?: string;
+  location?: string;
 }
 
 interface AuthState {
@@ -16,15 +18,15 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  accessToken: null,
-  // "skjslkssklskjdsljdljslkjd",
-  user: null,
-  // {
-  //     email: "blabla@gmail.com",
-  //     role: "admin",
-  //     id: "blabla",
-  //     name: "blabla",
-  //   }
+  accessToken: "skjslkssklskjdsljdljslkjd",
+  user: {
+    email: "blabla@gmail.com",
+    role: "admin",
+    id: "blabla",
+    name: "blabla",
+    phone: "1234567890",
+    location: "Somewhere",
+  },
   setToken: (token: string) => {
     const decoded = jwtDecode<UserPayload>(token);
     set({ accessToken: token, user: decoded });

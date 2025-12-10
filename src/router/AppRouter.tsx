@@ -10,12 +10,14 @@ import Admin from "@/features/Admin/pages/Admin";
 import Register from "@/features/auth/Signup/pages/Register";
 import ForgetPassword from "@/features/auth/reset/forget";
 import ResetPassword from "@/features/auth/reset/reset";
+import Profile from "@/features/profile/profile";
 
 export const AppRouter = () => {
   return (
     <Router>
       <ErrorBoundary>
         <Routes>
+          <Route path="*" element={<div className="grid place-content-center min-h-screen">404 Not Found</div>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forget-password" element={<ForgetPassword />} />
@@ -33,7 +35,16 @@ export const AppRouter = () => {
               </ProtectedRoute>
             }
           />
-          {/* Driver */}
+           <Route
+            path="/dashboard/user/profile"
+            element={
+              <ProtectedRoute>
+                <RoleRoute roles={["user", "admin"]}>
+                <Profile/>
+                </RoleRoute>
+              </ProtectedRoute>
+            }
+          /> {/* Driver */}
           <Route
             path="/dashboard/driver"
             element={
