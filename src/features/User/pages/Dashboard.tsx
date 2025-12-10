@@ -1,7 +1,7 @@
 
 import { useAuthStore } from "@/auth/store";
 
-const Home = () => {
+const Dashboard = () => {
   const user = useAuthStore((state) => state.user);
   
   return (
@@ -43,4 +43,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Dashboard;
