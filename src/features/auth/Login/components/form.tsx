@@ -4,6 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 import {
   Form,
@@ -26,11 +27,12 @@ import { PasswordInput } from "@/components/password-input";
 
 import { loginFormSchema } from "@/lib/validation-schemas";
 import { Link } from "react-router";
-import { useLoginMutation } from "../api";
+import { useAuthStore } from "@/auth/store";
 
 const formSchema = loginFormSchema;
 
 export default function LoginForm() {
+  const navigate = useNavigate();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,12 +40,17 @@ export default function LoginForm() {
       password: "",
     },
   });
-  const login = useLoginMutation();
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      // Assuming an async login function
       console.log(values);
-      login.mutateAsync(values);
+      useAuthStore.getState().setTestUser();
+      if (values.email.includes("admin")) {
+        navigate("/admin");
+      } else if (values.email.includes("driver")) {
+        navigate("/driver");
+      } else {
+        navigate("/user");
+      }
     } catch (error) {
       console.error("Form submission error", error);
       toast.error("Failed to submit the form. Please try again.");
