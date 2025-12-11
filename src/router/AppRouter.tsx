@@ -40,6 +40,7 @@ import Earnings from "@/features/Driver/pages/Earnings";
 import DriverProfile from "@/features/Driver/pages/Profile";
 import Vehicle from "@/features/Driver/pages/Vehicle";
 import Wallet from "@/features/Driver/pages/Wallet";
+import AuthLayout from "@/features/auth/layout/Layout";
 
 export const AppRouter = () => {
   return (
@@ -54,10 +55,12 @@ export const AppRouter = () => {
               </div>
             }
           />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forget-password" element={<ForgetPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="auth" element={<AuthLayout />}>
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
+            <Route path="forget-password" element={<ForgetPassword />} />
+            <Route path="reset-password" element={<ResetPassword />} />
+          </Route>
           <Route path="/" element={<Home />} />
           {/* User */}
           <Route
