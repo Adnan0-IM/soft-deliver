@@ -1,4 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type NotificationType = "ride" | "delivery" | "promo";
 
@@ -96,104 +108,82 @@ const Notifications: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: 960, margin: "24px auto", padding: 16 }}>
-      <h2>Notifications</h2>
+    <div className="container max-w-5xl mx-auto py-6">
+      <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
 
-      <div style={{ display: "flex", gap: 8, margin: "12px 0" }}>
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value as typeof filter)}
-          style={{ padding: 8 }}
-        >
-          <option value="all">All</option>
-          <option value="ride">Ride</option>
-          <option value="delivery">Delivery</option>
-          <option value="promo">Promo</option>
-        </select>
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search notifications..."
-          style={{ flex: 1, padding: 8 }}
-        />
-        <button onClick={markAllAsRead} style={{ padding: "8px 12px" }}>
-          Mark all as read
-        </button>
-      </div>
+      <Card className="mb-4">
+        <CardContent className="p-4 flex flex-col md:flex-row gap-3">
+          <div className="w-full md:w-48">
+            <Select
+              value={filter}
+              onValueChange={(v) => setFilter(v as typeof filter)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="All" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="ride">Ride</SelectItem>
+                <SelectItem value="delivery">Delivery</SelectItem>
+                <SelectItem value="promo">Promo</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex-1">
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search notifications..."
+            />
+          </div>
+          <div>
+            <Button variant="secondary" onClick={markAllAsRead}>
+              Mark all as read
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
-      {loading && <div>Loading…</div>}
-      {error && <div style={{ color: "red" }}>{error}</div>}
-
+      {loading && <div className="text-sm text-muted-foreground">Loading…</div>}
+      {error && <div className="text-sm text-destructive">{error}</div>}
       {!loading && filtered.length === 0 && (
-        <div style={{ color: "#6b7280" }}>No notifications.</div>
+        <div className="text-muted-foreground">No notifications.</div>
       )}
 
-      <div style={{ display: "grid", gap: 8 }}>
-        {filtered.map((n) => (
-          <div
-            key={n.id}
-            style={{
-              border: "1px solid #e5e7eb",
-              borderRadius: 8,
-              padding: 12,
-              background: n.read ? "#f9fafb" : "#fff",
-              display: "grid",
-              gap: 4,
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span
-                style={{
-                  padding: "2px 8px",
-                  borderRadius: 999,
-                  background:
-                    n.type === "ride"
-                      ? "#dbeafe"
-                      : n.type === "delivery"
-                      ? "#d1fae5"
-                      : "#fde68a",
-                  fontSize: 12,
-                }}
-              >
-                {n.type}
-              </span>
-              {!n.read && (
-                <span
-                  style={{
-                    marginLeft: "auto",
-                    fontSize: 12,
-                    color: "#2563eb",
-                  }}
-                >
-                  New
-                </span>
-              )}
-            </div>
-            <div style={{ fontWeight: 600 }}>{n.title}</div>
-            <div style={{ color: "#6b7280" }}>{n.body}</div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <div style={{ fontSize: 12, color: "#6b7280" }}>
-                {new Date(n.createdAt).toLocaleString()}
-              </div>
-              {!n.read && (
-                <button
-                  onClick={() => markAsRead(n.id)}
-                  style={{
-                    marginLeft: "auto",
-                    padding: "6px 10px",
-                    background: "#2563eb",
-                    color: "white",
-                    borderRadius: 6,
-                  }}
-                >
-                  Mark as read
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
+      <ScrollArea className="h-[560px] rounded-md border">
+        <div className="p-3 grid gap-2">
+          {filtered.map((n) => (
+            <Card key={n.id} className={n.read ? "bg-muted/30" : ""}>
+              <CardHeader className="py-3">
+                <div className="flex items-center gap-2">
+                  <Badge variant={n.type === "promo" ? "secondary" : "default"}>
+                    {n.type}
+                  </Badge>
+                  {!n.read && (
+                    <span className="ml-auto text-xs text-primary">New</span>
+                  )}
+                </div>
+                <CardTitle className="text-base">{n.title}</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 text-sm text-muted-foreground">
+                <div className="mb-2">{n.body}</div>
+                <div className="flex items-center gap-2 text-xs">
+                  <div>{new Date(n.createdAt).toLocaleString()}</div>
+                  {!n.read && (
+                    <Button
+                      size="sm"
+                      className="ml-auto"
+                      onClick={() => markAsRead(n.id)}
+                    >
+                      Mark as read
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </ScrollArea>
     </div>
   );
 };

@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 type TrackStatus =
   | "searching"
@@ -138,156 +141,116 @@ const TrackOrderAndRide: React.FC = () => {
         ? "In transit"
         : "Completed";
     return (
-      <div
-        style={{
-          padding: 10,
-          borderRadius: 8,
-          border: "1px solid #e5e7eb",
-          background: "#f9fafb",
-          marginBottom: 12,
-        }}
-      >
-        <div style={{ fontWeight: 600 }}>{label}</div>
-        <div style={{ fontSize: 12, color: "#6b7280" }}>
-          Status: {currentStatus.replace("_", " ")}
-        </div>
-      </div>
+      <Card className="mb-3 bg-muted/40">
+        <CardContent className="p-3">
+          <div className="font-semibold">{label}</div>
+          <div className="text-xs text-muted-foreground">
+            Status: {currentStatus.replace("_", " ")}
+          </div>
+        </CardContent>
+      </Card>
     );
   };
 
   const StatusProgress: React.FC = () => (
-    <div
-      style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}
-    >
+    <div className="flex gap-2 flex-wrap mb-3">
       {statusSequence.map((s, i) => (
-        <div
-          key={s}
-          style={{
-            padding: "6px 10px",
-            borderRadius: 6,
-            border: "1px solid #e5e7eb",
-            background: i === statusIndex ? "#dbeafe" : "#f3f4f6",
-            fontSize: 13,
-          }}
-        >
+        <Badge key={s} variant={i === statusIndex ? "default" : "secondary"}>
           {s.replace("_", " ")}
-        </div>
+        </Badge>
       ))}
     </div>
   );
 
   return (
-    <div style={{ maxWidth: 900, margin: "24px auto", padding: 16 }}>
-      <h2 style={{ marginBottom: 8 }}>Tracking {id}</h2>
+    <div className="container max-w-5xl mx-auto py-6">
+      <h2 className="text-2xl font-semibold mb-2">Tracking {id}</h2>
 
       <StatusBox />
       <StatusProgress />
 
-      {/* Live map */}
-      <div>
-        <div style={{ marginBottom: 6 }}>Live Map</div>
-        <div
-          ref={mapRef}
-          style={{ height: 360, background: "#e5e7eb", borderRadius: 8 }}
-          aria-label="Map placeholder"
-        />
-        {/* Driver/User coordinates */}
-        <div style={{ fontSize: 12, color: "#6b7280", marginTop: 6 }}>
-          Driver:{" "}
-          {driverLocation
-            ? `${driverLocation.lat.toFixed(5)}, ${driverLocation.lng.toFixed(
-                5
-              )}`
-            : "—"}{" "}
-          | User:{" "}
-          {`${userLocation.lat.toFixed(5)}, ${userLocation.lng.toFixed(5)}`}
-        </div>
-      </div>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">Live Map</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div
+            ref={mapRef}
+            className="h-[360px] bg-muted rounded-md"
+            aria-label="Map placeholder"
+          />
+          <div className="text-xs text-muted-foreground mt-2">
+            Driver:{" "}
+            {driverLocation
+              ? `${driverLocation.lat.toFixed(5)}, ${driverLocation.lng.toFixed(
+                  5
+                )}`
+              : "—"}{" "}
+            | User:{" "}
+            {`${userLocation.lat.toFixed(5)}, ${userLocation.lng.toFixed(5)}`}
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Driver info card */}
-      <div
-        style={{
-          marginTop: 16,
-          padding: 12,
-          border: "1px solid #e5e7eb",
-          borderRadius: 8,
-        }}
-      >
-        <div style={{ fontWeight: 600, marginBottom: 6 }}>Driver</div>
-        {driverInfo ? (
-          <div>
-            <div>{driverInfo.name}</div>
-            <div style={{ color: "#6b7280", fontSize: 14 }}>
-              {driverInfo.vehicle}
-            </div>
-            {driverInfo.phone && (
-              <div style={{ color: "#6b7280", fontSize: 12 }}>
-                {driverInfo.phone}
+      <div className="grid gap-3 mt-4 md:grid-cols-2">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Driver</CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm">
+            {driverInfo ? (
+              <div>
+                <div className="font-medium">{driverInfo.name}</div>
+                <div className="text-muted-foreground text-sm">
+                  {driverInfo.vehicle}
+                </div>
+                {driverInfo.phone && (
+                  <div className="text-muted-foreground text-xs">
+                    {driverInfo.phone}
+                  </div>
+                )}
               </div>
+            ) : (
+              <div className="text-muted-foreground">Searching for driver…</div>
             )}
-          </div>
-        ) : (
-          <div style={{ color: "#6b7280" }}>Searching for driver…</div>
-        )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Trip</CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm">
+            <div>Distance: {distanceKm ?? "—"} km</div>
+            <div>ETA: {etaMin ?? "—"} min</div>
+            <div>Cost: {price !== null ? `$${price}` : "—"}</div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Ride/delivery info */}
-      <div
-        style={{
-          marginTop: 12,
-          padding: 12,
-          border: "1px solid #e5e7eb",
-          borderRadius: 8,
-        }}
-      >
-        <div style={{ fontWeight: 600, marginBottom: 6 }}>Trip</div>
-        <div>Distance: {distanceKm ?? "—"} km</div>
-        <div>ETA: {etaMin ?? "—"} min</div>
-        <div>Cost: {price !== null ? `$${price}` : "—"}</div>
-      </div>
-
-      {/* Completion + rating */}
       {currentStatus === "completed" && (
-        <div
-          style={{
-            marginTop: 16,
-            padding: 12,
-            border: "1px solid #e5e7eb",
-            borderRadius: 8,
-          }}
-        >
-          <div style={{ fontWeight: 600, marginBottom: 6 }}>
-            Rate your experience
-          </div>
-          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            {[1, 2, 3, 4, 5].map((n) => (
-              <button
-                key={n}
-                onClick={() => setRating(n)}
-                style={{
-                  padding: "6px 10px",
-                  borderRadius: 6,
-                  border: "1px solid #e5e7eb",
-                  background: rating >= n ? "#fde68a" : "white",
-                }}
-              >
-                {n}★
-              </button>
-            ))}
-            <button
-              onClick={handleEndAndRate}
-              style={{
-                marginLeft: "auto",
-                background: "#2563eb",
-                color: "white",
-                padding: "6px 12px",
-                borderRadius: 6,
-              }}
-            >
-              Submit & Close
-            </button>
-          </div>
-        </div>
+        <Card className="mt-4">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Rate your experience</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <Button
+                  key={n}
+                  variant={rating >= n ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setRating(n)}
+                >
+                  {n}★
+                </Button>
+              ))}
+              <Button className="ml-auto" onClick={handleEndAndRate}>
+                Submit & Close
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );

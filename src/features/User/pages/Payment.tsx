@@ -1,4 +1,21 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  Card as UICard,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 type Card = {
   id: string;
@@ -177,231 +194,165 @@ const Payment: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: 960, margin: "24px auto", padding: 16 }}>
-      <h2>Payment</h2>
+    <div className="container max-w-5xl mx-auto py-6">
+      <h2 className="text-2xl font-semibold mb-4">Payment</h2>
 
-      {error && <div style={{ color: "red", marginBottom: 8 }}>{error}</div>}
-      {loading && <div>Loading…</div>}
+      {error && <div className="text-sm text-destructive mb-2">{error}</div>}
+      {loading && <div className="text-sm text-muted-foreground">Loading…</div>}
 
-      {/* Wallet */}
       {wallet && (
-        <div
-          style={{
-            padding: 12,
-            border: "1px solid #e5e7eb",
-            borderRadius: 8,
-            marginBottom: 16,
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-          }}
-        >
-          <div style={{ fontWeight: 600 }}>Wallet</div>
-          <div>
-            Balance:{" "}
-            <strong>
-              {wallet.currency} {wallet.balance.toFixed(2)}
-            </strong>
-          </div>
-          <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
-            <button disabled style={{ padding: "6px 10px" }}>
-              Add Funds (coming soon)
-            </button>
-            <button disabled style={{ padding: "6px 10px" }}>
-              Withdraw (coming soon)
-            </button>
-          </div>
-        </div>
+        <UICard className="mb-4">
+          <CardContent className="flex items-center gap-3 p-4">
+            <div className="font-semibold">Wallet</div>
+            <div>
+              Balance:{" "}
+              <strong>
+                {wallet.currency} {wallet.balance.toFixed(2)}
+              </strong>
+            </div>
+            <div className="ml-auto flex gap-2">
+              <Button size="sm" disabled>
+                Add Funds (soon)
+              </Button>
+              <Button size="sm" variant="secondary" disabled>
+                Withdraw (soon)
+              </Button>
+            </div>
+          </CardContent>
+        </UICard>
       )}
 
-      {/* Saved cards */}
-      <div
-        style={{
-          padding: 12,
-          border: "1px solid #e5e7eb",
-          borderRadius: 8,
-          marginBottom: 16,
-        }}
-      >
-        <div style={{ fontWeight: 600, marginBottom: 8 }}>Saved Cards</div>
-        {cards.length === 0 ? (
-          <div style={{ color: "#6b7280" }}>No cards saved.</div>
-        ) : (
-          <div style={{ display: "grid", gap: 8 }}>
-            {cards.map((c) => (
-              <div
-                key={c.id}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
-                  padding: 10,
-                  border: "1px solid #f3f4f6",
-                  borderRadius: 8,
-                }}
-              >
-                <div style={{ textTransform: "capitalize" }}>{c.brand}</div>
-                <div style={{ color: "#6b7280" }}>•••• {c.last4}</div>
-                <div style={{ color: "#6b7280" }}>
-                  Exp: {String(c.expMonth).padStart(2, "0")}/{c.expYear}
-                </div>
-                {c.default ? (
-                  <span
-                    style={{
-                      marginLeft: "auto",
-                      background: "#d1fae5",
-                      color: "#065f46",
-                      padding: "2px 8px",
-                      borderRadius: 999,
-                      fontSize: 12,
-                    }}
-                  >
-                    Default
-                  </span>
-                ) : (
-                  <button
-                    onClick={() => setDefaultCard(c.id)}
-                    style={{ marginLeft: "auto", padding: "6px 10px" }}
-                  >
-                    Set Default
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Add new card */}
-      <div
-        style={{
-          padding: 12,
-          border: "1px solid #e5e7eb",
-          borderRadius: 8,
-          marginBottom: 16,
-        }}
-      >
-        <div style={{ fontWeight: 600, marginBottom: 8 }}>Add New Card</div>
-        <div
-          style={{
-            display: "grid",
-            gap: 8,
-            gridTemplateColumns: "1fr 120px 140px",
-          }}
-        >
-          <input
-            type="text"
-            placeholder="Card number"
-            value={cardNumber}
-            onChange={(e) => setCardNumber(e.target.value)}
-            style={{ padding: 8 }}
-          />
-          <input
-            type="number"
-            placeholder="MM"
-            min={1}
-            max={12}
-            value={expMonth}
-            onChange={(e) => setExpMonth(e.target.value)}
-            style={{ padding: 8 }}
-          />
-          <input
-            type="number"
-            placeholder="YYYY"
-            value={expYear}
-            onChange={(e) => setExpYear(e.target.value)}
-            style={{ padding: 8 }}
-          />
-        </div>
-        <div style={{ marginTop: 8 }}>
-          <button
-            onClick={handleAddCard}
-            disabled={addCardDisabled}
-            style={{
-              background: "#2563eb",
-              color: "white",
-              padding: "6px 12px",
-              borderRadius: 6,
-            }}
-          >
-            {adding ? "Adding..." : "Add Card"}
-          </button>
-        </div>
-        <div style={{ fontSize: 12, color: "#6b7280", marginTop: 6 }}>
-          Test numbers: 4242 4242 4242 4242 (Visa), 5454 5454 5454 5454
-          (Mastercard).
-        </div>
-      </div>
-
-      {/* Payment logs */}
-      <div
-        style={{
-          padding: 12,
-          border: "1px solid #e5e7eb",
-          borderRadius: 8,
-        }}
-      >
-        <div style={{ fontWeight: 600, marginBottom: 8 }}>Payment Logs</div>
-        {logs.length === 0 ? (
-          <div style={{ color: "#6b7280" }}>No payments found.</div>
-        ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead>
-                <tr
-                  style={{
-                    textAlign: "left",
-                    borderBottom: "1px solid #e5e7eb",
-                  }}
-                >
-                  <th style={{ padding: "8px 6px" }}>Date</th>
-                  <th style={{ padding: "8px 6px" }}>Description</th>
-                  <th style={{ padding: "8px 6px" }}>Method</th>
-                  <th style={{ padding: "8px 6px" }}>Amount</th>
-                  <th style={{ padding: "8px 6px" }}>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {logs
-                  .slice()
-                  .sort((a, b) => +new Date(b.date) - +new Date(a.date))
-                  .map((l) => (
-                    <tr
-                      key={l.id}
-                      style={{ borderBottom: "1px solid #f3f4f6" }}
-                    >
-                      <td style={{ padding: "10px 6px", whiteSpace: "nowrap" }}>
-                        {new Date(l.date).toLocaleString()}
-                      </td>
-                      <td style={{ padding: "10px 6px" }}>{l.description}</td>
-                      <td
-                        style={{
-                          padding: "10px 6px",
-                          textTransform: "capitalize",
-                        }}
+      <UICard className="mb-4">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">Saved Cards</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {cards.length === 0 ? (
+            <div className="text-muted-foreground">No cards saved.</div>
+          ) : (
+            <div className="grid gap-2">
+              {cards.map((c) => (
+                <UICard key={c.id}>
+                  <CardContent className="flex items-center gap-3 p-3">
+                    <Badge variant="secondary" className="capitalize">
+                      {c.brand}
+                    </Badge>
+                    <div className="text-sm text-muted-foreground">
+                      •••• {c.last4}
+                    </div>
+                    <div className="text-sm">
+                      {String(c.expMonth).padStart(2, "0")}/{c.expYear}
+                    </div>
+                    {c.default ? (
+                      <Badge className="ml-auto">Default</Badge>
+                    ) : (
+                      <Button
+                        size="sm"
+                        className="ml-auto"
+                        variant="outline"
+                        onClick={() => setDefaultCard(c.id)}
                       >
-                        {l.method}
-                      </td>
-                      <td style={{ padding: "10px 6px" }}>
+                        Set Default
+                      </Button>
+                    )}
+                  </CardContent>
+                </UICard>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </UICard>
+
+      <UICard className="mb-4">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">Add New Card</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-2 grid-cols-1 sm:grid-cols-[1fr_120px_140px]">
+            <Input
+              placeholder="Card number"
+              value={cardNumber}
+              onChange={(e) => setCardNumber(e.target.value)}
+            />
+            <Input
+              type="number"
+              placeholder="MM"
+              min={1}
+              max={12}
+              value={expMonth}
+              onChange={(e) => setExpMonth(e.target.value)}
+            />
+            <Input
+              type="number"
+              placeholder="YYYY"
+              value={expYear}
+              onChange={(e) => setExpYear(e.target.value)}
+            />
+          </div>
+          <div className="mt-2">
+            <Button onClick={handleAddCard} disabled={addCardDisabled}>
+              {adding ? "Adding..." : "Add Card"}
+            </Button>
+          </div>
+          <div className="text-xs text-muted-foreground mt-2">
+            Test numbers: 4242 4242 4242 4242 (Visa), 5454 5454 5454 5454
+            (Mastercard).
+          </div>
+        </CardContent>
+      </UICard>
+
+      <UICard>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">Payment Logs</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          {logs.length === 0 ? (
+            <div className="p-4 text-muted-foreground">No payments found.</div>
+          ) : (
+            <div className="w-full overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Method</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {logs.map((l) => (
+                    <TableRow key={l.id}>
+                      <TableCell>{new Date(l.date).toLocaleString()}</TableCell>
+                      <TableCell>
                         {l.currency} {l.amount.toFixed(2)}
-                      </td>
-                      <td
-                        style={{
-                          padding: "10px 6px",
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        {l.status}
-                      </td>
-                    </tr>
+                      </TableCell>
+                      <TableCell className="capitalize">{l.method}</TableCell>
+                      <TableCell className="truncate max-w-[320px]">
+                        {l.description}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            l.status === "success"
+                              ? "default"
+                              : l.status === "failed"
+                              ? "destructive"
+                              : "secondary"
+                          }
+                        >
+                          {l.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
                   ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </UICard>
     </div>
   );
 };
-
 export default Payment;

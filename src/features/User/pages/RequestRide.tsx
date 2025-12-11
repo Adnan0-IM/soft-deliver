@@ -1,5 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 // This page is the core feature. Start simple.
 
@@ -27,10 +38,10 @@ const mockRequestRide = async (
 ) => {
   await new Promise((r) => setTimeout(r, 600));
   // Return a fake rideId
-  console.log(pickup)
-  console.log(destination)
+  console.log(pickup);
+  console.log(destination);
 
-  console.log(type)
+  console.log(type);
   return { rideId: `ride_${Date.now()}` };
 };
 
@@ -96,78 +107,72 @@ const RequestRide: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: 640, margin: "24px auto", padding: 16 }}>
-      <h2>Request a Ride</h2>
-
-      <div style={{ display: "grid", gap: 12 }}>
-        <label>
-          Pickup location
-          <input
-            type="text"
-            placeholder="e.g., 123 Main St"
-            value={pickup}
-            onChange={(e) => setPickup(e.target.value)}
-            style={{ width: "100%", padding: 8 }}
-          />
-        </label>
-
-        <label>
-          Destination
-          <input
-            type="text"
-            placeholder="e.g., Airport Terminal 1"
-            value={destination}
-            onChange={(e) => setDestination(e.target.value)}
-            style={{ width: "100%", padding: 8 }}
-          />
-        </label>
-
-        <label>
-          Ride type
-          <select
-            value={rideType}
-            onChange={(e) => setRideType(e.target.value as RideType)}
-            style={{ width: "100%", padding: 8 }}
-          >
-            <option value="bike">Bike</option>
-            <option value="car">Car</option>
-          </select>
-        </label>
-
-        <div style={{ display: "flex", gap: 8 }}>
-          <button
-            onClick={handleEstimate}
-            disabled={loadingEstimate || !canEstimate}
-          >
-            {loadingEstimate ? "Getting estimate..." : "Get Estimate"}
-          </button>
-          <button
-            onClick={handleConfirm}
-            disabled={loadingRequest || !estimate}
-            style={{ background: "#2563eb", color: "white" }}
-          >
-            {loadingRequest ? "Requesting..." : "Confirm Request"}
-          </button>
-        </div>
-
-        {error && <div style={{ color: "red" }}>{error}</div>}
-
-        {estimate && (
-          <div style={{ padding: 8, background: "#f3f4f6", borderRadius: 6 }}>
-            <div>Estimated Price: ${estimate.price}</div>
-            <div>ETA: {estimate.etaMinutes} min</div>
+    <div className="container max-w-2xl mx-auto py-6">
+      <h2 className="text-2xl font-semibold mb-4">Request a Ride</h2>
+      <Card>
+        <CardContent className="p-4 grid gap-3">
+          <div>
+            <Label className="mb-1 block">Pickup location</Label>
+            <Input
+              placeholder="e.g., 123 Main St"
+              value={pickup}
+              onChange={(e) => setPickup(e.target.value)}
+            />
           </div>
-        )}
-
-        <div>
-          <div>Map</div>
-          <div
-            ref={mapRef}
-            style={{ height: 300, background: "#e5e7eb", borderRadius: 8 }}
-            aria-label="Map placeholder"
-          />
-        </div>
-      </div>
+          <div>
+            <Label className="mb-1 block">Destination</Label>
+            <Input
+              placeholder="e.g., Airport Terminal 1"
+              value={destination}
+              onChange={(e) => setDestination(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label className="mb-1 block">Ride type</Label>
+            <Select
+              value={rideType}
+              onValueChange={(v) => setRideType(v as RideType)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="bike">Bike</SelectItem>
+                <SelectItem value="car">Car</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              onClick={handleEstimate}
+              disabled={loadingEstimate || !canEstimate}
+            >
+              {loadingEstimate ? "Getting estimate..." : "Get Estimate"}
+            </Button>
+            <Button
+              onClick={handleConfirm}
+              disabled={loadingRequest || !estimate}
+            >
+              {loadingRequest ? "Requesting..." : "Confirm Request"}
+            </Button>
+          </div>
+          {error && <div className="text-sm text-destructive">{error}</div>}
+          {estimate && (
+            <div className="p-3 rounded-md bg-muted">
+              <div>Estimated Price: ${estimate.price}</div>
+              <div>ETA: {estimate.etaMinutes} min</div>
+            </div>
+          )}
+          <div>
+            <div className="text-sm mb-1">Map</div>
+            <div
+              ref={mapRef}
+              className="h-[300px] bg-muted rounded-md"
+              aria-label="Map placeholder"
+            />
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

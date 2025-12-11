@@ -1,5 +1,15 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router";
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 type PackageType = "small" | "medium" | "large";
 
@@ -19,14 +29,7 @@ const mockDeliveryEstimate = async (
   };
 };
 
-const mockPlaceDeliveryOrder = async () => {
-  await new Promise((r) => setTimeout(r, 600));
-  return { orderId: `order_${Date.now()}` };
-};
-
-const RequestDelivery: React.FC = () => {
-  const navigate = useNavigate();
-
+const RequestDelivery = () => {
   const [pickup, setPickup] = useState("");
   const [dropoff, setDropoff] = useState("");
   const [packageType, setPackageType] = useState<PackageType>("small");
@@ -79,124 +82,112 @@ const RequestDelivery: React.FC = () => {
     }
     try {
       setLoadingOrder(true);
-      const res = await mockPlaceDeliveryOrder();
-      navigate(`/user/track/${res.orderId}`);
     } catch {
       setError("Failed to place delivery order.");
     } finally {
       setLoadingOrder(false);
     }
   };
-
   return (
-    <div style={{ maxWidth: 720, margin: "24px auto", padding: 16 }}>
-      <h2>Request a Delivery</h2>
-
-      <div style={{ display: "grid", gap: 12 }}>
-        <label>
-          Pickup address
-          <input
-            type="text"
-            placeholder="e.g., 123 Main St"
-            value={pickup}
-            onChange={(e) => setPickup(e.target.value)}
-            style={{ width: "100%", padding: 8 }}
-          />
-        </label>
-
-        <label>
-          Drop-off address
-          <input
-            type="text"
-            placeholder="e.g., 456 Market Ave"
-            value={dropoff}
-            onChange={(e) => setDropoff(e.target.value)}
-            style={{ width: "100%", padding: 8 }}
-          />
-        </label>
-
-        <label>
-          Package type
-          <select
-            value={packageType}
-            onChange={(e) => setPackageType(e.target.value as PackageType)}
-            style={{ width: "100%", padding: 8 }}
-          >
-            <option value="small">Small</option>
-            <option value="medium">Medium</option>
-            <option value="large">Large</option>
-          </select>
-        </label>
-
-        <label>
-          Weight (kg, optional)
-          <input
-            type="number"
-            min="0"
-            step="0.1"
-            placeholder="e.g., 2.5"
-            value={weight}
-            onChange={(e) => setWeight(e.target.value)}
-            style={{ width: "100%", padding: 8 }}
-          />
-        </label>
-
-        <label>
-          Receiver name
-          <input
-            type="text"
-            placeholder="e.g., Jane Doe"
-            value={receiverName}
-            onChange={(e) => setReceiverName(e.target.value)}
-            style={{ width: "100%", padding: 8 }}
-          />
-        </label>
-
-        <label>
-          Receiver phone
-          <input
-            type="tel"
-            placeholder="e.g., +123456789"
-            value={receiverPhone}
-            onChange={(e) => setReceiverPhone(e.target.value)}
-            style={{ width: "100%", padding: 8 }}
-          />
-        </label>
-
-        <div style={{ display: "flex", gap: 8 }}>
-          <button
-            onClick={handleEstimate}
-            disabled={loadingEstimate || !canEstimate}
-          >
-            {loadingEstimate ? "Calculating..." : "Calculate Cost"}
-          </button>
-          <button
-            onClick={handlePlaceOrder}
-            disabled={loadingOrder || !estimate}
-            style={{ background: "#2563eb", color: "white" }}
-          >
-            {loadingOrder ? "Placing..." : "Place Delivery Order"}
-          </button>
-        </div>
-
-        {error && <div style={{ color: "red" }}>{error}</div>}
-
-        {estimate && (
-          <div style={{ padding: 8, background: "#f3f4f6", borderRadius: 6 }}>
-            <div>Estimated Price: ${estimate.price}</div>
-            <div>ETA: {estimate.etaMinutes} min</div>
+    <div className="container max-w-3xl mx-auto py-6">
+      <h2 className="text-2xl font-semibold mb-4">Request a Delivery</h2>
+      <Card>
+        <CardContent className="p-4 grid gap-3">
+          <div>
+            <Label className="mb-1 block">Pickup address</Label>
+            <Input
+              placeholder="e.g., 123 Main St"
+              value={pickup}
+              onChange={(e) => setPickup(e.target.value)}
+            />
           </div>
-        )}
-
-        {/* Map Integration (optional). Reuse the same map placeholder or component as in RequestRide */}
-        <div>
-          <div>Map (optional)</div>
-          <div
-            style={{ height: 300, background: "#e5e7eb", borderRadius: 8 }}
-            aria-label="Map placeholder"
-          />
-        </div>
-      </div>
+          <div>
+            <Label className="mb-1 block">Drop-off address</Label>
+            <Input
+              placeholder="e.g., 456 Market Ave"
+              value={dropoff}
+              onChange={(e) => setDropoff(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label className="mb-1 block">Package type</Label>
+            <Select
+              value={packageType}
+              onValueChange={(v) => setPackageType(v as PackageType)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="small">Small</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="large">Large</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="mb-1 block">Weight (kg, optional)</Label>
+            <Input
+              type="number"
+              min={0}
+              step="0.1"
+              placeholder="e.g., 2.5"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label className="mb-1 block">Receiver name</Label>
+            <Input
+              placeholder="e.g., Jane Doe"
+              value={receiverName}
+              onChange={(e) => setReceiverName(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label className="mb-1 block">Receiver phone</Label>
+            <Input
+              type="tel"
+              placeholder="e.g., +123456789"
+              value={receiverPhone}
+              onChange={(e) => setReceiverPhone(e.target.value)}
+            />
+          </div>
+          <div className="flex gap-2">
+            <Button
+              onClick={handleEstimate}
+              disabled={loadingEstimate || !canEstimate}
+            >
+              {loadingEstimate ? "Calculating..." : "Calculate Cost"}
+            </Button>
+            <Button
+              onClick={handlePlaceOrder}
+              disabled={loadingOrder || !estimate}
+            >
+              {loadingOrder ? "Placing..." : "Place Delivery Order"}
+            </Button>
+          </div>
+          {error && <div className="text-sm text-destructive">{error}</div>}
+          {estimate && (
+            <div className="p-3 rounded-md bg-muted">
+              <div>Estimated Price: ${estimate.price}</div>
+              <div>ETA: {estimate.etaMinutes} min</div>
+            </div>
+          )}
+          <div>
+            <div className="text-sm mb-1">Map (optional)</div>
+            <div
+              className="h-[300px] bg-muted rounded-md"
+              aria-label="Map placeholder"
+            />
+          </div>
+        </CardContent>
+      </Card>
+      <div>Map (optional)</div>
+      <div
+        style={{ height: 300, background: "#e5e7eb", borderRadius: 8 }}
+        aria-label="Map placeholder"
+      />
     </div>
   );
 };

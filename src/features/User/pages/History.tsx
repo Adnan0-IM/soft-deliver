@@ -1,5 +1,26 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 type HistoryItem = {
   id: string;
@@ -59,7 +80,10 @@ const History: React.FC = () => {
       try {
         // Replace with: const res = await fetch('/user/history'); const data = await res.json();
         const data = await mockFetchHistory();
-        setItems(data);
+        const list = Array.isArray(data)
+          ? data
+          : (data as any)?.data ?? (data as any)?.items ?? [];
+        setItems(list as HistoryItem[]);
       } catch {
         setError("Failed to load history.");
       } finally {
@@ -69,8 +93,13 @@ const History: React.FC = () => {
     load();
   }, []);
 
-  const filtered = useMemo(() => {
-    return items
+  const filtered = useMemo<HistoryItem[]>(() => {
+    const list: HistoryItem[] = Array.isArray(items)
+      ? items
+      : (((items as unknown as any)?.data ??
+          (items as unknown as any)?.items ??
+          []) as HistoryItem[]);
+    return list
       .filter((i) => (filter === "all" ? true : i.type === filter))
       .filter((i) => {
         const q = query.trim().toLowerCase();
@@ -86,93 +115,101 @@ const History: React.FC = () => {
   }, [items, filter, query]);
 
   const viewReceipt = (id: string) => {
-    // Navigate to a detail page. Adjust the route to your app’s receipt page.
     navigate(`/user/receipt/${id}`);
   };
 
   return (
-    <div style={{ maxWidth: 960, margin: "24px auto", padding: 16 }}>
-      <h2>History</h2>
+    <div className="container max-w-5xl mx-auto py-6">
+      <h2 className="text-2xl font-semibold mb-4">History</h2>
 
-      <div style={{ display: "flex", gap: 8, margin: "12px 0" }}>
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value as typeof filter)}
-          style={{ padding: 8 }}
-        >
-          <option value="all">All</option>
-          <option value="ride">Ride only</option>
-          <option value="delivery">Delivery only</option>
-        </select>
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search by address, status..."
-          style={{ flex: 1, padding: 8 }}
-        />
-      </div>
+      <Card className="mb-4">
+        <CardContent className="p-4 flex flex-col md:flex-row gap-3">
+          <div className="w-full md:w-48">
+            <Label className="mb-1 block">Filter</Label>
+            <Select
+              value={filter}
+              onValueChange={(v) => setFilter(v as typeof filter)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="All" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="ride">Ride only</SelectItem>
+                <SelectItem value="delivery">Delivery only</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex-1">
+            <Label className="mb-1 block">Search</Label>
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search by address, status..."
+            />
+          </div>
+        </CardContent>
+      </Card>
 
-      {loading && <div>Loading…</div>}
-      {error && <div style={{ color: "red" }}>{error}</div>}
+      {loading && <div className="text-sm text-muted-foreground">Loading…</div>}
+      {error && <div className="text-sm text-destructive">{error}</div>}
 
       {!loading && filtered.length === 0 && (
-        <div style={{ color: "#6b7280" }}>No history found.</div>
+        <div className="text-muted-foreground">No history found.</div>
       )}
 
       {!loading && filtered.length > 0 && (
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr
-                style={{ textAlign: "left", borderBottom: "1px solid #e5e7eb" }}
-              >
-                <th style={{ padding: "8px 6px" }}>Date</th>
-                <th style={{ padding: "8px 6px" }}>Type</th>
-                <th style={{ padding: "8px 6px" }}>From</th>
-                <th style={{ padding: "8px 6px" }}>To</th>
-                <th style={{ padding: "8px 6px" }}>Cost</th>
-                <th style={{ padding: "8px 6px" }}>Status</th>
-                <th style={{ padding: "8px 6px" }} />
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((i) => (
-                <tr key={i.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
-                  <td style={{ padding: "10px 6px", whiteSpace: "nowrap" }}>
-                    {new Date(i.date).toLocaleString()}
-                  </td>
-                  <td
-                    style={{ padding: "10px 6px", textTransform: "capitalize" }}
-                  >
-                    {i.type}
-                  </td>
-                  <td style={{ padding: "10px 6px" }}>{i.from}</td>
-                  <td style={{ padding: "10px 6px" }}>{i.to}</td>
-                  <td style={{ padding: "10px 6px" }}>${i.cost.toFixed(2)}</td>
-                  <td
-                    style={{ padding: "10px 6px", textTransform: "capitalize" }}
-                  >
-                    {i.status.replace("_", " ")}
-                  </td>
-                  <td style={{ padding: "10px 6px", textAlign: "right" }}>
-                    <button
-                      onClick={() => viewReceipt(i.id)}
-                      style={{
-                        background: "#2563eb",
-                        color: "white",
-                        padding: "6px 10px",
-                        borderRadius: 6,
-                      }}
-                    >
-                      View Receipt
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Your trips</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>From</TableHead>
+                  <TableHead>To</TableHead>
+                  <TableHead>Cost</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right" />
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filtered.map((i) => (
+                  <TableRow key={i.id}>
+                    <TableCell className="whitespace-nowrap">
+                      {new Date(i.date).toLocaleString()}
+                    </TableCell>
+                    <TableCell className="capitalize">{i.type}</TableCell>
+                    <TableCell>{i.from}</TableCell>
+                    <TableCell>{i.to}</TableCell>
+                    <TableCell>${i.cost.toFixed(2)}</TableCell>
+                    <TableCell className="capitalize">
+                      <Badge
+                        variant={
+                          i.status === "completed"
+                            ? "default"
+                            : i.status === "cancelled"
+                            ? "destructive"
+                            : "secondary"
+                        }
+                      >
+                        {i.status.replace("_", " ")}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button size="sm" onClick={() => viewReceipt(i.id)}>
+                        View Receipt
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
