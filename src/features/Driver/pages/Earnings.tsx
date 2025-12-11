@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { getDriverEarnings } from "../api";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type EarningsSummary = {
   today: number;
@@ -44,129 +45,127 @@ export default function Earnings() {
   const weekly = useMemo(() => data?.weeklyChart ?? [], [data]);
 
   return (
-    <div style={{ padding: 16, display: "grid", gap: 16 }}>
-      <h2>Earnings</h2>
+    <div className="container px-4 lg:px-8 py-4 grid gap-4">
+      <h2 className="text-2xl font-semibold">Earnings</h2>
 
       {error && (
-        <div
-          style={{
-            padding: 12,
-            background: "#ffe5e5",
-            color: "#a40000",
-            borderRadius: 6,
-          }}
-        >
+        <div className="rounded-md border border-destructive/20 bg-destructive/10 text-destructive px-3 py-2">
           {error}
         </div>
       )}
 
       {/* Summary cards */}
-      <section
-        style={{
-          display: "grid",
-          gap: 16,
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-        }}
-      >
-        <div
-          style={{ padding: 16, border: "1px solid #e5e7eb", borderRadius: 8 }}
-        >
-          <h3 style={{ marginTop: 0 }}>Today’s Earnings</h3>
-          <p style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>
-            {loading ? "—" : currency(data?.today)}
-          </p>
-        </div>
-        <div
-          style={{ padding: 16, border: "1px solid #e5e7eb", borderRadius: 8 }}
-        >
-          <h3 style={{ marginTop: 0 }}>Weekly Total</h3>
-          <p style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>
-            {loading ? "—" : currency(data?.weekTotal)}
-          </p>
-        </div>
-        <div
-          style={{ padding: 16, border: "1px solid #e5e7eb", borderRadius: 8 }}
-        >
-          <h3 style={{ marginTop: 0 }}>Total Earnings</h3>
-          <p style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>
-            {loading ? "—" : currency(data?.total)}
-          </p>
-        </div>
-        <div
-          style={{ padding: 16, border: "1px solid #e5e7eb", borderRadius: 8 }}
-        >
-          <h3 style={{ marginTop: 0 }}>Pending Payout</h3>
-          <p style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>
-            {loading ? "—" : currency(data?.pendingPayout)}
-          </p>
-        </div>
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Today’s Earnings</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {loading ? "—" : currency(data?.today)}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Weekly Total</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {loading ? "—" : currency(data?.weekTotal)}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Total Earnings</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {loading ? "—" : currency(data?.total)}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Pending Payout</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {loading ? "—" : currency(data?.pendingPayout)}
+            </div>
+          </CardContent>
+        </Card>
       </section>
 
       {/* Weekly chart placeholder */}
-      <section
-        style={{ padding: 16, border: "1px solid #e5e7eb", borderRadius: 8 }}
-      >
-        <h3 style={{ marginTop: 0 }}>Weekly Chart</h3>
-        {loading ? (
-          <p>Loading…</p>
-        ) : weekly.length === 0 ? (
-          <p style={{ color: "#6b7280" }}>No chart data.</p>
-        ) : (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: `repeat(${weekly.length}, 1fr)`,
-              gap: 8,
-            }}
-          >
-            {weekly.map((d) => (
-              <div key={d.date} style={{ textAlign: "center" }}>
-                <div
-                  title={`${new Date(d.date).toLocaleDateString()}: ${currency(
-                    d.amount
-                  )}`}
-                  style={{
-                    height:
-                      Math.max(8, Math.min(120, Math.round(d.amount))) + "px",
-                    background: "#111827",
-                    borderRadius: 4,
-                    marginBottom: 6,
-                  }}
-                />
-                <div style={{ fontSize: 12, color: "#6b7280" }}>
-                  {new Date(d.date).toLocaleDateString(undefined, {
-                    month: "short",
-                    day: "numeric",
-                  })}
+      <Card>
+        <CardHeader>
+          <CardTitle>Weekly Chart</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <p className="text-sm text-muted-foreground">Loading…</p>
+          ) : weekly.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No chart data.</p>
+          ) : (
+            <div
+              className="grid gap-2"
+              style={{
+                gridTemplateColumns: `repeat(${weekly.length}, minmax(0,1fr))`,
+              }}
+            >
+              {weekly.map((d) => (
+                <div key={d.date} className="text-center">
+                  <div
+                    title={`${new Date(
+                      d.date
+                    ).toLocaleDateString()}: ${currency(d.amount)}`}
+                    className="mx-auto w-3 rounded bg-primary"
+                    style={{
+                      height:
+                        Math.max(8, Math.min(120, Math.round(d.amount))) + "px",
+                    }}
+                  />
+                  <div className="mt-1 text-[10px] text-muted-foreground">
+                    {new Date(d.date).toLocaleDateString(undefined, {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          )}
+          <div className="mt-2 text-xs text-muted-foreground">
+            (Optional: replace with Chart.js or Recharts.)
           </div>
-        )}
-        <div style={{ fontSize: 12, color: "#6b7280", marginTop: 8 }}>
-          (Optional: replace with Chart.js or Recharts.)
-        </div>
-      </section>
+        </CardContent>
+      </Card>
 
       {/* Completed payout history */}
-      <section
-        style={{ padding: 16, border: "1px solid #e5e7eb", borderRadius: 8 }}
-      >
-        <h3 style={{ marginTop: 0 }}>Completed Payouts</h3>
-        {loading ? (
-          <p>Loading…</p>
-        ) : data?.completedPayouts?.length ? (
-          <ul style={{ margin: 0, paddingLeft: 18 }}>
-            {data.completedPayouts.map((p) => (
-              <li key={p.id} style={{ marginBottom: 6 }}>
-                {new Date(p.date).toLocaleString()} — {currency(p.amount)}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p style={{ color: "#6b7280" }}>No completed payouts.</p>
-        )}
-      </section>
+      <Card>
+        <CardHeader>
+          <CardTitle>Completed Payouts</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <p className="text-sm text-muted-foreground">Loading…</p>
+          ) : data?.completedPayouts?.length ? (
+            <ul className="list-disc pl-5">
+              {data.completedPayouts.map((p) => (
+                <li key={p.id} className="mb-1">
+                  {new Date(p.date).toLocaleString()} — {currency(p.amount)}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              No completed payouts.
+            </p>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

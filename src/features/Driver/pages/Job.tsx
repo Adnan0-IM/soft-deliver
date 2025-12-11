@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { getJob, updateJobStatus, sendDriverLocation } from "../api";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type JobStatus =
   | "going_to_pickup"
@@ -142,191 +145,138 @@ export default function JobPage() {
 
   if (!job) {
     return (
-      <div style={{ padding: 16 }}>
-        <h2>Job</h2>
-        {error ? <p style={{ color: "#a40000" }}>{error}</p> : <p>Loading…</p>}
+      <div className="container px-4 lg:px-8 py-4">
+        <h2 className="text-2xl font-semibold">Job</h2>
+        {error ? (
+          <p className="text-sm text-destructive">{error}</p>
+        ) : (
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        )}
       </div>
     );
   }
 
   return (
-    <div style={{ padding: 16, display: "grid", gap: 16 }}>
-      <h2>Job #{job.id}</h2>
+    <div className="container px-4 lg:px-8 py-4 grid gap-4">
+      <h2 className="text-2xl font-semibold">Job #{job.id}</h2>
 
       {error && (
-        <div
-          style={{
-            padding: 12,
-            background: "#ffe5e5",
-            color: "#a40000",
-            borderRadius: 6,
-          }}
-        >
+        <div className="rounded-md border border-destructive/20 bg-destructive/10 text-destructive px-3 py-2">
           {error}
         </div>
       )}
 
       {/* Map placeholder */}
-      <section
-        style={{
-          height: 320,
-          border: "1px solid #e5e7eb",
-          borderRadius: 8,
-          padding: 8,
-          display: "grid",
-          gap: 6,
-          background: "#f9fafb",
-        }}
-      >
-        <strong>Map</strong>
-        <div style={{ fontSize: 12, color: "#374151" }}>
-          Driver:{" "}
-          {driverLoc
-            ? `${driverLoc.lat.toFixed(5)}, ${driverLoc.lng.toFixed(5)}`
-            : "Locating…"}
-        </div>
-        <div style={{ fontSize: 12, color: "#374151" }}>
-          Pickup:{" "}
-          {job.pickup
-            ? `${job.pickup.lat.toFixed(5)}, ${job.pickup.lng.toFixed(5)}`
-            : "—"}
-        </div>
-        <div style={{ fontSize: 12, color: "#374151" }}>
-          Drop-off:{" "}
-          {job.dropoff
-            ? `${job.dropoff.lat.toFixed(5)}, ${job.dropoff.lng.toFixed(5)}`
-            : "—"}
-        </div>
-        <div style={{ fontSize: 12, color: "#6b7280" }}>
-          (Integrate your map library here: Google Maps, Mapbox GL, Leaflet,
-          etc.)
-        </div>
-      </section>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">Map</CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-1 text-sm">
+          <div className="text-foreground/80">
+            Driver:{" "}
+            {driverLoc
+              ? `${driverLoc.lat.toFixed(5)}, ${driverLoc.lng.toFixed(5)}`
+              : "Locating…"}
+          </div>
+          <div className="text-foreground/80">
+            Pickup:{" "}
+            {job.pickup
+              ? `${job.pickup.lat.toFixed(5)}, ${job.pickup.lng.toFixed(5)}`
+              : "—"}
+          </div>
+          <div className="text-foreground/80">
+            Drop-off:{" "}
+            {job.dropoff
+              ? `${job.dropoff.lat.toFixed(5)}, ${job.dropoff.lng.toFixed(5)}`
+              : "—"}
+          </div>
+          <div className="text-xs text-muted-foreground">
+            (Integrate your map library here: Google Maps, Mapbox GL, Leaflet,
+            etc.)
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Status box + actions */}
-      <section
-        style={{
-          display: "grid",
-          gap: 12,
-          padding: 16,
-          border: "1px solid #e5e7eb",
-          borderRadius: 8,
-        }}
-      >
-        <div>
-          <strong>Status:</strong>{" "}
-          <span
-            style={{
-              padding: "2px 8px",
-              borderRadius: 999,
-              background: "#e0e7ff",
-              color: "#3730a3",
-              fontWeight: 600,
-            }}
-          >
-            {statusLabel}
-          </span>
-        </div>
-
-        <div style={{ display: "flex", gap: 8 }}>
-          <button
-            onClick={() => setStatus("arrived")}
-            disabled={busy || job.status !== "going_to_pickup"}
-            style={{
-              padding: "8px 12px",
-              borderRadius: 6,
-              border: "1px solid #e5e7eb",
-            }}
-          >
-            Arrived
-          </button>
-          <button
-            onClick={() => setStatus("picked_up")}
-            disabled={
-              busy ||
-              (job.status !== "arrived" && job.status !== "going_to_pickup")
-            }
-            style={{
-              padding: "8px 12px",
-              borderRadius: 6,
-              border: "1px solid #e5e7eb",
-            }}
-          >
-            Pick Up
-          </button>
-          <button
-            onClick={() => setStatus("dropping_off")}
-            disabled={busy || job.status !== "picked_up"}
-            style={{
-              padding: "8px 12px",
-              borderRadius: 6,
-              border: "1px solid #e5e7eb",
-            }}
-          >
-            Dropping Off
-          </button>
-          <button
-            onClick={() => setStatus("completed")}
-            disabled={busy || job.status !== "dropping_off"}
-            style={{
-              marginLeft: "auto",
-              padding: "8px 12px",
-              borderRadius: 6,
-              border: "1px solid #e5e7eb",
-              background: "#111827",
-              color: "white",
-            }}
-          >
-            Complete
-          </button>
-        </div>
-      </section>
+      <Card>
+        <CardContent className="grid gap-3 py-4">
+          <div className="flex items-center gap-2">
+            <strong>Status:</strong>
+            <Badge variant="secondary">{statusLabel}</Badge>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setStatus("arrived")}
+              disabled={busy || job.status !== "going_to_pickup"}
+            >
+              Arrived
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setStatus("picked_up")}
+              disabled={
+                busy ||
+                (job.status !== "arrived" && job.status !== "going_to_pickup")
+              }
+            >
+              Pick Up
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setStatus("dropping_off")}
+              disabled={busy || job.status !== "picked_up"}
+            >
+              Dropping Off
+            </Button>
+            <Button
+              className="ml-auto"
+              onClick={() => setStatus("completed")}
+              disabled={busy || job.status !== "dropping_off"}
+            >
+              Complete
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Customer info */}
-      <section
-        style={{
-          display: "grid",
-          gap: 8,
-          padding: 16,
-          border: "1px solid #e5e7eb",
-          borderRadius: 8,
-        }}
-      >
-        <h3 style={{ margin: 0 }}>Customer</h3>
-        <div>Name: {job.customer?.name ?? "—"}</div>
-        <div>Phone: {job.customer?.phone ?? "—"}</div>
-      </section>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">Customer</CardTitle>
+        </CardHeader>
+        <CardContent className="grid text-sm">
+          <div>Name: {job.customer?.name ?? "—"}</div>
+          <div>Phone: {job.customer?.phone ?? "—"}</div>
+        </CardContent>
+      </Card>
 
       {/* Earnings */}
-      <section
-        style={{
-          display: "grid",
-          gap: 8,
-          padding: 16,
-          border: "1px solid #e5e7eb",
-          borderRadius: 8,
-        }}
-      >
-        <h3 style={{ margin: 0 }}>Earnings</h3>
-        <div>
-          Base:{" "}
-          {typeof job.earnings?.base === "number"
-            ? `$${job.earnings!.base.toFixed(2)}`
-            : "—"}
-        </div>
-        <div>
-          Tip:{" "}
-          {typeof job.earnings?.tip === "number"
-            ? `$${job.earnings!.tip.toFixed(2)}`
-            : "—"}
-        </div>
-        <div>
-          Total:{" "}
-          {typeof job.earnings?.total === "number"
-            ? `$${job.earnings!.total.toFixed(2)}`
-            : "—"}
-        </div>
-      </section>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">Earnings</CardTitle>
+        </CardHeader>
+        <CardContent className="grid text-sm">
+          <div>
+            Base:{" "}
+            {typeof job.earnings?.base === "number"
+              ? `$${job.earnings!.base.toFixed(2)}`
+              : "—"}
+          </div>
+          <div>
+            Tip:{" "}
+            {typeof job.earnings?.tip === "number"
+              ? `$${job.earnings!.tip.toFixed(2)}`
+              : "—"}
+          </div>
+          <div>
+            Total:{" "}
+            {typeof job.earnings?.total === "number"
+              ? `$${job.earnings!.total.toFixed(2)}`
+              : "—"}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

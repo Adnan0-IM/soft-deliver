@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import { getDriverMe, updateDriverProfile } from "../api";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 type DriverProfile = {
   fullName: string;
@@ -90,178 +94,109 @@ export default function Profile() {
   };
 
   return (
-    <div style={{ padding: 16, display: "grid", gap: 16 }}>
-      <h2>Profile</h2>
+    <div className="container px-4 lg:px-8 py-4 grid gap-4">
+      <h2 className="text-2xl font-semibold">Profile</h2>
 
       {error && (
-        <div
-          style={{
-            padding: 12,
-            background: "#ffe5e5",
-            color: "#a40000",
-            borderRadius: 6,
-          }}
-        >
+        <div className="rounded-md border border-destructive/20 bg-destructive/10 text-destructive px-3 py-2">
           {error}
         </div>
       )}
       {saved && (
-        <div
-          style={{
-            padding: 12,
-            background: "#dcfce7",
-            color: "#065f46",
-            borderRadius: 6,
-          }}
-        >
+        <div className="rounded-md border border-emerald-400/30 bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 px-3 py-2">
           Saved successfully.
         </div>
       )}
 
       {loading ? (
-        <div>Loading…</div>
+        <div className="text-sm text-muted-foreground">Loading…</div>
       ) : (
-        <form onSubmit={onSave} style={{ display: "grid", gap: 12 }}>
+        <form onSubmit={onSave} className="grid gap-3 max-w-2xl">
           {/* Photo */}
-          <section
-            style={{
-              display: "flex",
-              gap: 16,
-              alignItems: "center",
-              border: "1px solid #e5e7eb",
-              borderRadius: 8,
-              padding: 16,
-            }}
-          >
-            <img
-              src={form.photoUrl || data?.photoUrl || ""}
-              alt="Profile"
-              onError={(e) =>
-                ((e.target as HTMLImageElement).style.display = "none")
-              }
-              style={{
-                width: 96,
-                height: 96,
-                objectFit: "cover",
-                borderRadius: "50%",
-                border: "1px solid #e5e7eb",
-              }}
-            />
-            <div style={{ display: "grid", gap: 6 }}>
-              <label>
-                <strong>Photo</strong>
-              </label>
-              <input type="file" accept="image/*" onChange={onPhotoChange} />
-              <div style={{ fontSize: 12, color: "#6b7280" }}>
-                Accepted formats: JPG/PNG. Max ~5MB (server may enforce).
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Photo</CardTitle>
+            </CardHeader>
+            <CardContent className="flex items-center gap-4 py-4">
+              <img
+                src={form.photoUrl || data?.photoUrl || ""}
+                alt="Profile"
+                onError={(e) =>
+                  ((e.target as HTMLImageElement).style.display = "none")
+                }
+                className="size-24 rounded-full border object-cover"
+              />
+              <div className="grid gap-1.5 text-sm">
+                <Label>Upload new photo</Label>
+                <Input type="file" accept="image/*" onChange={onPhotoChange} />
+                <div className="text-xs text-muted-foreground">
+                  Accepted formats: JPG/PNG. Max ~5MB (server may enforce).
+                </div>
               </div>
-            </div>
-          </section>
+            </CardContent>
+          </Card>
 
           {/* Fields */}
-          <section
-            style={{
-              display: "grid",
-              gap: 12,
-              border: "1px solid #e5e7eb",
-              borderRadius: 8,
-              padding: 16,
-            }}
-          >
-            <div style={{ display: "grid", gap: 6 }}>
-              <label htmlFor="fullName">
-                <strong>Full name</strong>
-              </label>
-              <input
-                id="fullName"
-                name="fullName"
-                value={form.fullName}
-                onChange={onChange}
-                placeholder="John Doe"
-                style={{
-                  padding: 8,
-                  borderRadius: 6,
-                  border: "1px solid #e5e7eb",
-                }}
-                required
-              />
-            </div>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Details</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="fullName">Full name</Label>
+                <Input
+                  id="fullName"
+                  name="fullName"
+                  value={form.fullName}
+                  onChange={onChange}
+                  placeholder="John Doe"
+                  required
+                />
+              </div>
 
-            <div style={{ display: "grid", gap: 6 }}>
-              <label htmlFor="phone">
-                <strong>Phone</strong>
-              </label>
-              <input
-                id="phone"
-                name="phone"
-                value={form.phone}
-                onChange={onChange}
-                placeholder="+1 555-555-5555"
-                style={{
-                  padding: 8,
-                  borderRadius: 6,
-                  border: "1px solid #e5e7eb",
-                }}
-                required
-              />
-            </div>
+              <div className="grid gap-2">
+                <Label htmlFor="phone">Phone</Label>
+                <Input
+                  id="phone"
+                  name="phone"
+                  value={form.phone}
+                  onChange={onChange}
+                  placeholder="+1 555-555-5555"
+                  required
+                />
+              </div>
 
-            <div style={{ display: "grid", gap: 6 }}>
-              <label htmlFor="email">
-                <strong>Email</strong>
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={form.email}
-                onChange={onChange}
-                placeholder="john@example.com"
-                style={{
-                  padding: 8,
-                  borderRadius: 6,
-                  border: "1px solid #e5e7eb",
-                }}
-                required
-              />
-            </div>
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={form.email}
+                  onChange={onChange}
+                  placeholder="john@example.com"
+                  required
+                />
+              </div>
 
-            <div style={{ display: "grid", gap: 6 }}>
-              <label htmlFor="licenseNumber">
-                <strong>License number</strong>
-              </label>
-              <input
-                id="licenseNumber"
-                name="licenseNumber"
-                value={form.licenseNumber ?? ""}
-                onChange={onChange}
-                placeholder="DL-1234567"
-                style={{
-                  padding: 8,
-                  borderRadius: 6,
-                  border: "1px solid #e5e7eb",
-                }}
-              />
-            </div>
+              <div className="grid gap-2">
+                <Label htmlFor="licenseNumber">License number</Label>
+                <Input
+                  id="licenseNumber"
+                  name="licenseNumber"
+                  value={form.licenseNumber ?? ""}
+                  onChange={onChange}
+                  placeholder="DL-1234567"
+                />
+              </div>
 
-            <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-              <button
-                type="submit"
-                disabled={saving}
-                style={{
-                  padding: "8px 12px",
-                  borderRadius: 6,
-                  border: "1px solid #e5e7eb",
-                  background: "#111827",
-                  color: "white",
-                  cursor: saving ? "not-allowed" : "pointer",
-                }}
-                aria-busy={saving}
-              >
-                {saving ? "Saving…" : "Save"}
-              </button>
-            </div>
-          </section>
+              <div className="flex gap-2 mt-2">
+                <Button type="submit" disabled={saving} aria-busy={saving}>
+                  {saving ? "Saving…" : "Save"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </form>
       )}
     </div>

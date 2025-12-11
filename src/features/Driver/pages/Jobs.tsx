@@ -3,6 +3,9 @@ import { useDriverStore } from "../store";
 import { goOnline, goOffline, sendDriverLocation } from "../api";
 import { connectDriverRequestsWS, disconnectDriverRequestsWS } from "../ws";
 import JobModal from "../components/Job";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type JobRequest = {
   id: string;
@@ -140,103 +143,61 @@ export default function Jobs() {
   };
 
   return (
-    <div style={{ padding: 16, display: "grid", gap: 16 }}>
-      <h2>Jobs</h2>
+    <div className="container px-4 lg:px-8 py-4 grid gap-4">
+      <h2 className="text-2xl font-semibold">Jobs</h2>
 
       {error && (
-        <div
-          style={{
-            padding: 12,
-            background: "#ffe5e5",
-            color: "#a40000",
-            borderRadius: 6,
-          }}
-        >
+        <div className="rounded-md border border-destructive/20 bg-destructive/10 text-destructive px-3 py-2">
           {error}
         </div>
       )}
 
       {/* Status and toggle */}
-      <section
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          padding: 16,
-          border: "1px solid #e5e7eb",
-          borderRadius: 8,
-        }}
-      >
-        <strong>Status:</strong>
-        <span
-          style={{
-            padding: "2px 8px",
-            borderRadius: 999,
-            background: isOnline ? "#dcfce7" : "#fee2e2",
-            color: isOnline ? "#065f46" : "#991b1b",
-            fontWeight: 600,
-          }}
-        >
-          {statusLabel}
-        </span>
-        <span
-          title={wsConnected ? "Subscribed to job events" : "Not subscribed"}
-          style={{
-            marginLeft: 8,
-            padding: "2px 8px",
-            borderRadius: 999,
-            background: wsConnected ? "#e0e7ff" : "#f3f4f6",
-            color: wsConnected ? "#3730a3" : "#4b5563",
-            fontWeight: 600,
-          }}
-        >
-          WS: {wsConnected ? "Connected" : "Disconnected"}
-        </span>
-        <button
-          onClick={onToggle}
-          disabled={toggling}
-          style={{
-            marginLeft: "auto",
-            padding: "8px 12px",
-            borderRadius: 6,
-            border: "1px solid #e5e7eb",
-            background: "#111827",
-            color: "white",
-            cursor: toggling ? "not-allowed" : "pointer",
-          }}
-        >
-          {toggling ? "Updating…" : isOnline ? "Go Offline" : "Go Online"}
-        </button>
-      </section>
+      <Card>
+        <CardContent className="flex items-center gap-3 py-4">
+          <strong>Status:</strong>
+          <Badge
+            className="capitalize"
+            variant={isOnline ? "secondary" : "outline"}
+          >
+            {statusLabel}
+          </Badge>
+          <Badge
+            variant={wsConnected ? "secondary" : "outline"}
+            title={wsConnected ? "Subscribed to job events" : "Not subscribed"}
+          >
+            WS: {wsConnected ? "Connected" : "Disconnected"}
+          </Badge>
+          <Button onClick={onToggle} disabled={toggling} className="ml-auto">
+            {toggling ? "Updating…" : isOnline ? "Go Offline" : "Go Online"}
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* Job area */}
-      <section
-        style={{
-          position: "relative",
-          padding: 16,
-          border: "1px solid #e5e7eb",
-          borderRadius: 8,
-          filter: isOnline ? "none" : "grayscale(1)",
-          opacity: isOnline ? 1 : 0.6,
-          pointerEvents: isOnline ? "auto" : "none",
-        }}
+      <Card
         aria-disabled={!isOnline}
+        className={!isOnline ? "pointer-events-none opacity-60 grayscale" : ""}
       >
-        <h3 style={{ marginTop: 0 }}>Incoming Jobs</h3>
-        {isOnline ? (
-          lastRequest ? (
-            <p style={{ margin: 0, color: "#111827" }}>
-              New request received. See details in modal.
-            </p>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">Incoming Jobs</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isOnline ? (
+            lastRequest ? (
+              <p className="text-sm">
+                New request received. See details in modal.
+              </p>
+            ) : (
+              <p className="text-sm text-muted-foreground">Waiting for jobs…</p>
+            )
           ) : (
-            <p style={{ margin: 0, color: "#6b7280" }}>Waiting for jobs…</p>
-          )
-        ) : (
-          <p style={{ margin: 0, color: "#6b7280" }}>
-            You are offline. Go online to receive jobs.
-          </p>
-        )}
-      </section>
+            <p className="text-sm text-muted-foreground">
+              You are offline. Go online to receive jobs.
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Modal */}
       {lastRequest && (

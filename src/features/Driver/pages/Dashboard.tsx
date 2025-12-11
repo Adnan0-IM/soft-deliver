@@ -1,4 +1,4 @@
-import  { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { useDriverStore } from "../store";
 import {
@@ -7,6 +7,9 @@ import {
   getDriverSummary,
 } from "../api";
 import { connectDriverRequestsWS, disconnectDriverRequestsWS } from "../ws";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const currency = (n: number | undefined) =>
   (typeof n === "number" ? n : 0).toLocaleString(undefined, {
@@ -57,9 +60,9 @@ export default function Dashboard() {
             onError: (e) => console.warn("WS error:", e?.message || e),
           });
         }
-      } catch (e ) {
+      } catch (e) {
         if (!mounted) return;
-        setError(( e as Error)?.message || "Failed to load driver data.");
+        setError((e as Error)?.message || "Failed to load driver data.");
       } finally {
         if (mounted) setLoading(false);
       }
@@ -102,147 +105,91 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div style={{ padding: 16 }}>
-        <h2>Driver Dashboard</h2>
-        <p>Loading…</p>
+      <div className="container px-4 lg:px-8 py-4">
+        <h2 className="text-2xl font-semibold">Driver Dashboard</h2>
+        <p className="text-sm text-muted-foreground">Loading…</p>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: 16, display: "grid", gap: 16 }}>
-      <h2>Driver Dashboard</h2>
+    <div className="container px-4 lg:px-8 py-4 grid gap-4">
+      <h2 className="text-2xl font-semibold">Driver Dashboard</h2>
 
       {error && (
-        <div
-          style={{
-            padding: 12,
-            background: "#ffe5e5",
-            color: "#a40000",
-            borderRadius: 6,
-          }}
-        >
+        <div className="rounded-md border border-destructive/20 bg-destructive/10 text-destructive px-3 py-2">
           {error}
         </div>
       )}
 
       {/* Online/Offline Toggle */}
-      <section
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          padding: 16,
-          border: "1px solid #e5e7eb",
-          borderRadius: 8,
-        }}
-      >
-        <strong>Status:</strong>
-        <span
-          style={{
-            padding: "2px 8px",
-            borderRadius: 999,
-            background: driverStatus === "online" ? "#dcfce7" : "#fee2e2",
-            color: driverStatus === "online" ? "#065f46" : "#991b1b",
-            fontWeight: 600,
-          }}
-        >
-          {statusLabel}
-        </span>
-        <button
-          onClick={onToggle}
-          disabled={toggling}
-          style={{
-            marginLeft: "auto",
-            padding: "8px 12px",
-            borderRadius: 6,
-            border: "1px solid #e5e7eb",
-            background: "#111827",
-            color: "white",
-            cursor: toggling ? "not-allowed" : "pointer",
-          }}
-          aria-busy={toggling}
-        >
-          {toggling
-            ? "Updating…"
-            : driverStatus === "online"
-            ? "Go Offline"
-            : "Go Online"}
-        </button>
-      </section>
+      <Card>
+        <CardContent className="flex items-center gap-3 py-4">
+          <strong>Status:</strong>
+          <Badge variant="secondary" className="capitalize">
+            {statusLabel}
+          </Badge>
+          <Button onClick={onToggle} disabled={toggling} className="ml-auto">
+            {toggling
+              ? "Updating…"
+              : driverStatus === "online"
+              ? "Go Offline"
+              : "Go Online"}
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* Cards */}
-      <section
-        style={{
-          display: "grid",
-          gap: 16,
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-        }}
-      >
-        <div
-          style={{ padding: 16, border: "1px solid #e5e7eb", borderRadius: 8 }}
-        >
-          <h3 style={{ marginTop: 0 }}>Active Job</h3>
-          {currentJobId ? (
-            <div>
-              <p style={{ margin: "8px 0" }}>Job ID: {currentJobId}</p>
-              <button
-                onClick={() => navigate(`/driver/jobs/${currentJobId}`)}
-                style={{
-                  padding: "6px 10px",
-                  borderRadius: 6,
-                  border: "1px solid #e5e7eb",
-                }}
-              >
-                View Job
-              </button>
-            </div>
-          ) : (
-            <p style={{ margin: 0, color: "#6b7280" }}>No active job</p>
-          )}
-        </div>
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Active Job</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {currentJobId ? (
+              <div className="space-y-2">
+                <p className="text-sm">Job ID: {currentJobId}</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate(`/driver/jobs/${currentJobId}`)}
+                >
+                  View Job
+                </Button>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground m-0">No active job</p>
+            )}
+          </CardContent>
+        </Card>
 
-        <div
-          style={{ padding: 16, border: "1px solid #e5e7eb", borderRadius: 8 }}
-        >
-          <h3 style={{ marginTop: 0 }}>Today’s Earnings</h3>
-          <p style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>
-            {currency(todaysEarnings)}
-          </p>
-        </div>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Today’s Earnings</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{currency(todaysEarnings)}</div>
+          </CardContent>
+        </Card>
 
-        <div
-          style={{ padding: 16, border: "1px solid #e5e7eb", borderRadius: 8 }}
-        >
-          <h3 style={{ marginTop: 0 }}>Pending Payout</h3>
-          <p style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>
-            {currency(pendingPayout)}
-          </p>
-        </div>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Pending Payout</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{currency(pendingPayout)}</div>
+          </CardContent>
+        </Card>
       </section>
 
       {/* Quick Actions */}
-      <section style={{ display: "flex", gap: 12 }}>
-        <button
-          onClick={() => navigate("/driver/jobs")}
-          style={{
-            padding: "8px 12px",
-            borderRadius: 6,
-            border: "1px solid #e5e7eb",
-          }}
-        >
+      <section className="flex gap-3">
+        <Button variant="outline" onClick={() => navigate("/driver/jobs")}>
           View Jobs
-        </button>
-        <button
-          onClick={() => navigate("/driver/wallet")}
-          style={{
-            padding: "8px 12px",
-            borderRadius: 6,
-            border: "1px solid #e5e7eb",
-          }}
-        >
+        </Button>
+        <Button variant="outline" onClick={() => navigate("/driver/wallet")}>
           View Wallet
-        </button>
+        </Button>
       </section>
     </div>
   );

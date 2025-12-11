@@ -1,5 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { getDriverHistory } from "../api";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 type HistoryItem = {
   id: string;
@@ -24,7 +35,20 @@ export default function History() {
       try {
         const data = await getDriverHistory();
         if (!mounted) return;
-        setItems(data);
+        const normalizeList = (input: unknown): HistoryItem[] => {
+          if (Array.isArray(input)) return input as HistoryItem[];
+          if (input && typeof input === "object") {
+            const obj = input as { data?: unknown; items?: unknown };
+            const arr = Array.isArray(obj.data)
+              ? (obj.data as HistoryItem[])
+              : Array.isArray(obj.items)
+              ? (obj.items as HistoryItem[])
+              : [];
+            return arr;
+          }
+          return [] as HistoryItem[];
+        };
+        setItems(normalizeList(data));
       } catch (e) {
         setError((e as Error)?.message || "Failed to load history.");
       } finally {
@@ -36,169 +60,98 @@ export default function History() {
     };
   }, []);
 
-  const filtered = useMemo(() => {
-    if (filter === "all") return items;
-    return items.filter((i) => i.type === filter);
+  const filtered = useMemo<HistoryItem[]>(() => {
+    const base: HistoryItem[] = Array.isArray(items) ? items : [];
+    return filter === "all" ? base : base.filter((i) => i.type === filter);
   }, [items, filter]);
 
   return (
-    <div style={{ padding: 16, display: "grid", gap: 16 }}>
-      <h2>History</h2>
+    <div className="container px-4 lg:px-8 py-4 grid gap-4">
+      <h2 className="text-2xl font-semibold">History</h2>
 
       {error && (
-        <div
-          style={{
-            padding: 12,
-            background: "#ffe5e5",
-            color: "#a40000",
-            borderRadius: 6,
-          }}
-        >
+        <div className="rounded-md border border-destructive/20 bg-destructive/10 text-destructive px-3 py-2">
           {error}
         </div>
       )}
 
       {/* Filters */}
-      <section style={{ display: "flex", gap: 8 }}>
-        <button
+      <section className="flex gap-2">
+        <Button
+          variant={filter === "all" ? "default" : "outline"}
           onClick={() => setFilter("all")}
-          style={{
-            padding: "6px 10px",
-            borderRadius: 6,
-            border: "1px solid #e5e7eb",
-            background: filter === "all" ? "#111827" : "white",
-            color: filter === "all" ? "white" : "#111827",
-          }}
+          size="sm"
         >
           All
-        </button>
-        <button
+        </Button>
+        <Button
+          variant={filter === "delivery" ? "default" : "outline"}
           onClick={() => setFilter("delivery")}
-          style={{
-            padding: "6px 10px",
-            borderRadius: 6,
-            border: "1px solid #e5e7eb",
-            background: filter === "delivery" ? "#111827" : "white",
-            color: filter === "delivery" ? "white" : "#111827",
-          }}
+          size="sm"
         >
           Delivery
-        </button>
-        <button
+        </Button>
+        <Button
+          variant={filter === "ride" ? "default" : "outline"}
           onClick={() => setFilter("ride")}
-          style={{
-            padding: "6px 10px",
-            borderRadius: 6,
-            border: "1px solid #e5e7eb",
-            background: filter === "ride" ? "#111827" : "white",
-            color: filter === "ride" ? "white" : "#111827",
-          }}
+          size="sm"
         >
           Ride
-        </button>
+        </Button>
       </section>
 
       {/* Table */}
-      <section
-        style={{
-          overflowX: "auto",
-          border: "1px solid #e5e7eb",
-          borderRadius: 8,
-        }}
-      >
-        {loading ? (
-          <div style={{ padding: 16 }}>Loading…</div>
-        ) : filtered.length === 0 ? (
-          <div style={{ padding: 16, color: "#6b7280" }}>No history found.</div>
-        ) : (
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ background: "#f9fafb" }}>
-                <th
-                  style={{
-                    textAlign: "left",
-                    padding: 10,
-                    borderBottom: "1px solid #e5e7eb",
-                  }}
-                >
-                  Date
-                </th>
-                <th
-                  style={{
-                    textAlign: "left",
-                    padding: 10,
-                    borderBottom: "1px solid #e5e7eb",
-                  }}
-                >
-                  Type
-                </th>
-                <th
-                  style={{
-                    textAlign: "left",
-                    padding: 10,
-                    borderBottom: "1px solid #e5e7eb",
-                  }}
-                >
-                  Distance
-                </th>
-                <th
-                  style={{
-                    textAlign: "left",
-                    padding: 10,
-                    borderBottom: "1px solid #e5e7eb",
-                  }}
-                >
-                  Earnings
-                </th>
-                <th
-                  style={{
-                    textAlign: "left",
-                    padding: 10,
-                    borderBottom: "1px solid #e5e7eb",
-                  }}
-                >
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((i) => (
-                <tr key={i.id}>
-                  <td
-                    style={{ padding: 10, borderBottom: "1px solid #f3f4f6" }}
-                  >
-                    {new Date(i.date).toLocaleString()}
-                  </td>
-                  <td
-                    style={{ padding: 10, borderBottom: "1px solid #f3f4f6" }}
-                  >
-                    {i.type}
-                  </td>
-                  <td
-                    style={{ padding: 10, borderBottom: "1px solid #f3f4f6" }}
-                  >
-                    {typeof i.distanceKm === "number"
-                      ? `${i.distanceKm.toFixed(2)} km`
-                      : "—"}
-                  </td>
-                  <td
-                    style={{ padding: 10, borderBottom: "1px solid #f3f4f6" }}
-                  >
-                    {typeof i.earnings === "number"
-                      ? `$${i.earnings.toFixed(2)}`
-                      : "—"}
-                  </td>
-                  <td
-                    style={{ padding: 10, borderBottom: "1px solid #f3f4f6" }}
-                  >
-                    {i.status ?? "—"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </section>
+      <Card>
+        <CardHeader className="border-b">
+          <CardTitle>History Items</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-4">
+          {loading ? (
+            <div className="text-sm text-muted-foreground">Loading…</div>
+          ) : filtered.length === 0 ? (
+            <div className="text-sm text-muted-foreground">
+              No history found.
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Distance</TableHead>
+                  <TableHead>Earnings</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filtered.map((i) => (
+                  <TableRow key={i.id}>
+                    <TableCell>{new Date(i.date).toLocaleString()}</TableCell>
+                    <TableCell>
+                      <Badge variant="secondary" className="capitalize">
+                        {i.type}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {typeof i.distanceKm === "number"
+                        ? `${i.distanceKm.toFixed(2)} km`
+                        : "—"}
+                    </TableCell>
+                    <TableCell>
+                      {typeof i.earnings === "number"
+                        ? `$${i.earnings.toFixed(2)}`
+                        : "—"}
+                    </TableCell>
+                    <TableCell className="capitalize">
+                      {i.status ?? "—"}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

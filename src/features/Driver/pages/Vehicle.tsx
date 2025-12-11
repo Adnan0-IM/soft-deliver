@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import { getDriverVehicle, updateDriverVehicle } from "../api";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 type Vehicle = {
   type: string;
@@ -10,8 +14,6 @@ type Vehicle = {
 };
 
 export default function Vehicle() {
-  const [data, setData] = useState<Vehicle | null>(null);
-  console.log(data)
   const [form, setForm] = useState<Vehicle>({
     type: "",
     plateNumber: "",
@@ -32,7 +34,6 @@ export default function Vehicle() {
       try {
         const v = await getDriverVehicle();
         if (!mounted) return;
-        setData(v);
         setForm({
           type: v.type ?? "",
           plateNumber: v.plateNumber ?? "",
@@ -78,160 +79,96 @@ export default function Vehicle() {
   };
 
   return (
-    <div style={{ padding: 16, display: "grid", gap: 16 }}>
-      <h2>Vehicle</h2>
+    <div className="container px-4 lg:px-8 py-4 grid gap-4">
+      <h2 className="text-2xl font-semibold">Vehicle</h2>
 
       {error && (
-        <div
-          style={{
-            padding: 12,
-            background: "#ffe5e5",
-            color: "#a40000",
-            borderRadius: 6,
-          }}
-        >
+        <div className="rounded-md border border-destructive/20 bg-destructive/10 text-destructive px-3 py-2">
           {error}
         </div>
       )}
       {saved && (
-        <div
-          style={{
-            padding: 12,
-            background: "#dcfce7",
-            color: "#065f46",
-            borderRadius: 6,
-          }}
-        >
+        <div className="rounded-md border border-emerald-400/30 bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 px-3 py-2">
           Saved successfully.
         </div>
       )}
 
       {loading ? (
-        <div>Loading…</div>
+        <div className="text-sm text-muted-foreground">Loading…</div>
       ) : (
-        <form onSubmit={onSave} style={{ display: "grid", gap: 12 }}>
-          <section
-            style={{
-              display: "grid",
-              gap: 12,
-              border: "1px solid #e5e7eb",
-              borderRadius: 8,
-              padding: 16,
-            }}
-          >
-            <div style={{ display: "grid", gap: 6 }}>
-              <label htmlFor="type">
-                <strong>Vehicle type</strong>
-              </label>
-              <input
-                id="type"
-                name="type"
-                value={form.type}
-                onChange={onChange}
-                placeholder="Car, Bike, Scooter, Van"
-                style={{
-                  padding: 8,
-                  borderRadius: 6,
-                  border: "1px solid #e5e7eb",
-                }}
-                required
-              />
-            </div>
+        <form onSubmit={onSave} className="grid gap-3">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Vehicle Details</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="type">Vehicle type</Label>
+                <Input
+                  id="type"
+                  name="type"
+                  value={form.type}
+                  onChange={onChange}
+                  placeholder="Car, Bike, Scooter, Van"
+                  required
+                />
+              </div>
 
-            <div style={{ display: "grid", gap: 6 }}>
-              <label htmlFor="plateNumber">
-                <strong>Plate number</strong>
-              </label>
-              <input
-                id="plateNumber"
-                name="plateNumber"
-                value={form.plateNumber}
-                onChange={onChange}
-                placeholder="ABC-1234"
-                style={{
-                  padding: 8,
-                  borderRadius: 6,
-                  border: "1px solid #e5e7eb",
-                }}
-                required
-              />
-            </div>
+              <div className="grid gap-2">
+                <Label htmlFor="plateNumber">Plate number</Label>
+                <Input
+                  id="plateNumber"
+                  name="plateNumber"
+                  value={form.plateNumber}
+                  onChange={onChange}
+                  placeholder="ABC-1234"
+                  required
+                />
+              </div>
 
-            <div style={{ display: "grid", gap: 6 }}>
-              <label htmlFor="model">
-                <strong>Model</strong>
-              </label>
-              <input
-                id="model"
-                name="model"
-                value={form.model ?? ""}
-                onChange={onChange}
-                placeholder="Toyota Corolla"
-                style={{
-                  padding: 8,
-                  borderRadius: 6,
-                  border: "1px solid #e5e7eb",
-                }}
-              />
-            </div>
+              <div className="grid gap-2">
+                <Label htmlFor="model">Model</Label>
+                <Input
+                  id="model"
+                  name="model"
+                  value={form.model ?? ""}
+                  onChange={onChange}
+                  placeholder="Toyota Corolla"
+                />
+              </div>
 
-            <div style={{ display: "grid", gap: 6 }}>
-              <label htmlFor="color">
-                <strong>Color</strong>
-              </label>
-              <input
-                id="color"
-                name="color"
-                value={form.color ?? ""}
-                onChange={onChange}
-                placeholder="Blue"
-                style={{
-                  padding: 8,
-                  borderRadius: 6,
-                  border: "1px solid #e5e7eb",
-                }}
-              />
-            </div>
+              <div className="grid gap-2">
+                <Label htmlFor="color">Color</Label>
+                <Input
+                  id="color"
+                  name="color"
+                  value={form.color ?? ""}
+                  onChange={onChange}
+                  placeholder="Blue"
+                />
+              </div>
 
-            <div style={{ display: "grid", gap: 6 }}>
-              <label htmlFor="year">
-                <strong>Year</strong>
-              </label>
-              <input
-                id="year"
-                name="year"
-                type="number"
-                min={1970}
-                max={new Date().getFullYear() + 1}
-                value={form.year ?? ""}
-                onChange={onChange}
-                placeholder="2020"
-                style={{
-                  padding: 8,
-                  borderRadius: 6,
-                  border: "1px solid #e5e7eb",
-                }}
-              />
-            </div>
+              <div className="grid gap-2">
+                <Label htmlFor="year">Year</Label>
+                <Input
+                  id="year"
+                  name="year"
+                  type="number"
+                  min={1970}
+                  max={new Date().getFullYear() + 1}
+                  value={form.year ?? ""}
+                  onChange={onChange}
+                  placeholder="2020"
+                />
+              </div>
 
-            <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-              <button
-                type="submit"
-                disabled={saving}
-                style={{
-                  padding: "8px 12px",
-                  borderRadius: 6,
-                  border: "1px solid #e5e7eb",
-                  background: "#111827",
-                  color: "white",
-                  cursor: saving ? "not-allowed" : "pointer",
-                }}
-                aria-busy={saving}
-              >
-                {saving ? "Saving…" : "Save"}
-              </button>
-            </div>
-          </section>
+              <div className="flex gap-2 mt-2">
+                <Button type="submit" disabled={saving} aria-busy={saving}>
+                  {saving ? "Saving…" : "Save"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </form>
       )}
     </div>
