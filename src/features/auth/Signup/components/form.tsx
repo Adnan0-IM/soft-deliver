@@ -55,7 +55,7 @@ export default function SignupForm() {
 
   return (
     <div className="flex min-h-[60vh] h-full w-full items-center justify-center px-4">
-      <Card className="mx-auto max-w-sm min-w-[24rem]">
+      <Card className="mx-auto min-w-[20rem] max-w-sm md:min-w-[24rem]">
         <CardHeader>
           <CardTitle className="text-2xl">Register</CardTitle>
           <CardDescription>
