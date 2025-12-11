@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { acceptJob, rejectJob } from "../api";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export type JobRequest = {
   id: string;
@@ -53,112 +55,68 @@ export default function JobModal({ job, onClose }: Props) {
     <div
       role="dialog"
       aria-modal="true"
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(0,0,0,0.35)",
-        display: "grid",
-        placeItems: "center",
-        zIndex: 1000,
-      }}
+      className="fixed inset-0 bg-black/35 grid place-items-center z-50"
       onClick={onClose}
     >
-      <div
+      <Card
         onClick={(e) => e.stopPropagation()}
-        style={{
-          width: "min(520px, 95vw)",
-          background: "white",
-          borderRadius: 10,
-          boxShadow: "0 10px 24px rgba(0,0,0,0.2)",
-          padding: 16,
-          display: "grid",
-          gap: 12,
-        }}
+        className="w-[95vw] sm:w-[520px] shadow-xl"
       >
-        <h3 style={{ margin: 0 }}>New Job Request</h3>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">New Job Request</CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-3">
+          {error && (
+            <div className="rounded-md border border-destructive/20 bg-destructive/10 text-destructive px-3 py-2">
+              {error}
+            </div>
+          )}
 
-        {error && (
-          <div
-            style={{
-              padding: 10,
-              background: "#ffe5e5",
-              color: "#a40000",
-              borderRadius: 6,
-            }}
-          >
-            {error}
+          <div className="grid gap-2 text-sm">
+            <div>
+              <span className="font-semibold">Pickup:</span>{" "}
+              {job.pickupAddress ?? "—"}
+            </div>
+            <div>
+              <span className="font-semibold">Drop-off:</span>{" "}
+              {job.dropoffAddress ?? "—"}
+            </div>
+            <div>
+              <span className="font-semibold">Estimated earnings:</span>{" "}
+              {typeof job.price === "number" ? `$${job.price.toFixed(2)}` : "—"}
+            </div>
+            <div>
+              <span className="font-semibold">Distance:</span>{" "}
+              {typeof job.distanceKm === "number"
+                ? `${job.distanceKm} km`
+                : "—"}
+            </div>
+            <div>
+              <span className="font-semibold">Time estimate:</span>{" "}
+              {typeof job.timeEstimateMins === "number"
+                ? `${job.timeEstimateMins} min`
+                : "—"}
+            </div>
           </div>
-        )}
 
-        <div style={{ display: "grid", gap: 8 }}>
-          <div>
-            <strong>Pickup:</strong> {job.pickupAddress ?? "—"}
+          <div className="flex gap-2 pt-2">
+            <Button onClick={onAccept} disabled={busy} aria-busy={busy}>
+              {busy ? "Processing…" : "Accept"}
+            </Button>
+            <Button onClick={onReject} disabled={busy} variant="outline">
+              Reject
+            </Button>
+            <Button
+              onClick={onClose}
+              disabled={busy}
+              variant="outline"
+              className="ml-auto"
+            >
+              Close
+            </Button>
           </div>
-          <div>
-            <strong>Drop-off:</strong> {job.dropoffAddress ?? "—"}
-          </div>
-          <div>
-            <strong>Estimated earnings:</strong>{" "}
-            {typeof job.price === "number" ? `$${job.price.toFixed(2)}` : "—"}
-          </div>
-          <div>
-            <strong>Distance:</strong>{" "}
-            {typeof job.distanceKm === "number" ? `${job.distanceKm} km` : "—"}
-          </div>
-          <div>
-            <strong>Time estimate:</strong>{" "}
-            {typeof job.timeEstimateMins === "number"
-              ? `${job.timeEstimateMins} min`
-              : "—"}
-          </div>
-        </div>
-
-        <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
-          <button
-            onClick={onAccept}
-            disabled={busy}
-            style={{
-              padding: "8px 12px",
-              borderRadius: 6,
-              border: "1px solid #e5e7eb",
-              background: "#111827",
-              color: "white",
-              cursor: busy ? "not-allowed" : "pointer",
-            }}
-            aria-busy={busy}
-          >
-            {busy ? "Processing…" : "Accept"}
-          </button>
-          <button
-            onClick={onReject}
-            disabled={busy}
-            style={{
-              padding: "8px 12px",
-              borderRadius: 6,
-              border: "1px solid #e5e7eb",
-              background: "white",
-              color: "#111827",
-              cursor: busy ? "not-allowed" : "pointer",
-            }}
-          >
-            Reject
-          </button>
-          <button
-            onClick={onClose}
-            disabled={busy}
-            style={{
-              marginLeft: "auto",
-              padding: "8px 12px",
-              borderRadius: 6,
-              border: "1px solid #e5e7eb",
-              background: "white",
-              color: "#111827",
-            }}
-          >
-            Close
-          </button>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
