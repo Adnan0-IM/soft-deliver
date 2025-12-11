@@ -1,34 +1,28 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, Menu } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Bell, Menu } from 'lucide-react'
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useState } from "react";
-import { NavLink } from "react-router";
-import { Button } from "@/components/ui/button";
+import { NavLink } from 'react-router';
 
 export const links = [
-  { name: "Dashboard", path: "/admin" },
-  { name: "Users", path: "/admin/users" },
-  { name: "Drivers", path: "/admin/drivers" },
-  { name: "Orders", path: "/admin/orders" },
-  { name: "Payments", path: "/admin/manage-payments" },
-  { name: "Analytics", path: "/admin/analytics" },
-  { name: "Settings", path: "/admin/settings" },
+  { name: "Home", path: "/driver" },
+  { name: "Jobs", path: "/driver/Jobs" },
+  { name: "History", path: "/driver/history" },
+  { name: "Earnings", path: "/driver/earnings" },
+  { name: "Vehicle", path: "/driver/vehicle" },
+  { name: "Profile", path: "/driver/profile" },
 ];
-export default function Topbar() {
-
+const Topbar = () => {
 
   const [open, setOpen] = useState(false);
   return (
     <>
     <header className="h-16 bg-card border-b border-border flex items-center justify-between px-4 md:px-6">
       <div className="flex items-center gap-3">
+
         <Button className="md:hidden" variant={"outline"} onClick={()=> setOpen(true)}><Menu/></Button>
-        <h1 className="text-lg font-semibold">Admin</h1>
+        <h1 className="text-lg font-semibold">Welcome</h1>
       </div>
 
       <div className="flex items-center gap-4">
@@ -39,13 +33,14 @@ export default function Topbar() {
         </Avatar>
       </div>
     </header>
-     {/* Mobile sheet trigger (place in Topbar; duplicated here for standalone usage) */}
+
+   {/* Mobile sheet trigger (place in Topbar; duplicated here for standalone usage) */}
       <div className="">
       
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetContent side="left" className="p-0 w-64">
             <SheetHeader className="border-b border-border p-4">
-              <SheetTitle>Admin Panel</SheetTitle>
+              <SheetTitle>SOFT DELIVER</SheetTitle>
             </SheetHeader>
             <nav className="p-4 space-y-1">
               {links.map((item) => (
@@ -68,7 +63,8 @@ export default function Topbar() {
           </SheetContent>
         </Sheet>
       </div>
-
     </>
-  );
+  )
 }
+
+export default Topbar

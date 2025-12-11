@@ -10,6 +10,16 @@ import ForgetPassword from "@/features/auth/reset/forget";
 import ResetPassword from "@/features/auth/reset/reset";
 
 import AdminLayout from "@/features/Admin/layout/Layout";
+import Dashboard from "@/features/Admin/pages/Dashboard";
+import Users from "@/features/Admin/pages/Users";
+import UserPage from "@/features/Admin/pages/User";
+import Drivers from "@/features/Admin/pages/Drivers";
+import DriverPage from "@/features/Admin/pages/Driver";
+import Orders from "@/features/Admin/pages/Orders";
+import Analytics from "@/features/Admin/pages/Analytics";
+import ManagePayments from "@/features/Admin/pages/ManagePayments";
+import OrderPage from "@/features/Admin/pages/Order";
+import Settings from "@/features/Admin/pages/Settings";
 
 import UserLayout from "@/features/User/layout/Layout";
 import UserDashboard from "@/features/User/pages/Dashboard";
@@ -30,16 +40,6 @@ import Earnings from "@/features/Driver/pages/Earnings";
 import DriverProfile from "@/features/Driver/pages/Profile";
 import Vehicle from "@/features/Driver/pages/Vehicle";
 import Wallet from "@/features/Driver/pages/Wallet";
-import Dashboard from "@/features/Admin/pages/Dashboard";
-import Users from "@/features/Admin/pages/Users";
-import UserPage from "@/features/Admin/pages/User";
-import Drivers from "@/features/Admin/pages/Drivers";
-import DriverPage from "@/features/Admin/pages/Driver";
-import Orders from "@/features/Admin/pages/Orders";
-import Analytics from "@/features/Admin/pages/Analytics";
-import ManagePayments from "@/features/Admin/pages/ManagePayments";
-import OrderPage from "@/features/Admin/pages/Order";
-import Settings from "@/features/Admin/pages/Settings";
 
 export const AppRouter = () => {
   return (
@@ -110,13 +110,12 @@ export const AppRouter = () => {
               </ProtectedRoute>
             }
           >
-            <Route path="dashboard" element={<Dashboard />} />
+            <Route index element={<Dashboard />} />
             <Route path="users" element={<Users />} />
             <Route path="user/:id" element={<UserPage />} />
             <Route path="drivers" element={<Drivers />} />
             <Route path="driver/:id" element={<DriverPage />} />
-            <Route path="orders" element={<Orders />} /> // both rides +
-            deliveries
+            <Route path="orders" element={<Orders />} />
             <Route path="order/:id" element={<OrderPage />} />
             <Route path="manage-payments" element={<ManagePayments />} />
             <Route path="analytics" element={<Analytics />} />

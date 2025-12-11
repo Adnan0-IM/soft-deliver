@@ -1,6 +1,6 @@
+
 import { NavLink } from "react-router";
 import { links } from "./Topbar";
-
 
 
 
@@ -8,10 +8,10 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-58 bg-card border-r border-border h-full fixed left-0 top-0 flex-col ">
+   {/* Desktop sidebar */}
+      <aside className="hidden md:flex w-64 bg-card border-r border-border h-full fixed left-0 top-0 flex-col ">
         <div className="p-4 text-xl font-semibold border-b border-border">
-          Admin Panel <sub>Soft deliver</sub>
+          SOFT DELIVER
         </div>
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {links.map((item) => (
@@ -31,8 +31,7 @@ export default function Sidebar() {
           ))}
         </nav>
       </aside>
-
-     
     </>
   );
 }
+
