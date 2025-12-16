@@ -1,5 +1,6 @@
 import { Outlet, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export default function AuthLayout() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export default function AuthLayout() {
         <div className="mx-auto w-full max-w-7xl flex items-center justify-between px-4 lg:px-6 py-3">
           <div className="font-semibold tracking-tight">Soft Deliver</div>
           <div className="flex items-center gap-2">
+            <ModeToggle />
             <Button variant="ghost" size="sm" onClick={() => navigate("/help")}>
               Help
             </Button>
