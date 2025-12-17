@@ -6,7 +6,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useState } from "react";
 import { Link, NavLink } from "react-router";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,18 +21,18 @@ import { useAuthStore } from "@/auth/store";
 import { adminLinks, driverLinks, userLinks } from "./constants.ts";
 import { cn } from "@/lib/utils";
 import { useTheme } from "../theme-provider.tsx";
-import { useSwipeable } from "react-swipeable";
 
-export default function Topbar() {
-  const [open, setOpen] = useState(false);
+export default function Topbar({
+  open,
+  setOpen,
+}: {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}) {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const { setTheme, theme } = useTheme();
-  const handlers = useSwipeable({
-    onSwipedLeft: () => setOpen(false),
-    onSwipedRight: () => setOpen(true),
-  });
 
   let links;
   if (user?.role === "admin") {
@@ -120,7 +119,7 @@ export default function Topbar() {
         </div>
       </header>
       {/* Mobile sheet trigger (place in Topbar; duplicated here for standalone usage) */}
-      <div {...handlers} className="">
+      <div className="">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetContent side="left" className="p-0 w-full">
             <SheetHeader className="border-b h-16 border-border p-4">
