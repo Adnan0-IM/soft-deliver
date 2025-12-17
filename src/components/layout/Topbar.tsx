@@ -20,12 +20,15 @@ import {
 import { useNavigate } from "react-router";
 import { useAuthStore } from "@/auth/store";
 import { adminLinks, driverLinks, userLinks } from "./constants.ts";
+import { cn } from "@/lib/utils";
+import { useTheme } from "../theme-provider.tsx";
 
 export default function Topbar() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
+  const { setTheme, theme } = useTheme();
 
   let links;
   if (user?.role === "admin") {
@@ -36,11 +39,21 @@ export default function Topbar() {
     links = userLinks;
   }
   if (!user) return null;
+  const toggleTheme = () => {
+    if (theme === "light") {
+      setTheme("dark");
+    } else {
+      setTheme("light");
+    }
+  };
   return (
     <>
       <header className="h-16 bg-card border-b border-border flex items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-3 sm:gap-4">
-          <button className="cursor-pointer" onClick={() => setOpen(true)}>
+          <button
+            className="cursor-pointer md:hidden"
+            onClick={() => setOpen(true)}
+          >
             <Menu className="size-6" />
           </button>
           <Link to={"/"} className="md:hidden">
@@ -83,8 +96,9 @@ export default function Topbar() {
               <DropdownMenuItem onClick={() => navigate("/admin/settings")}>
                 Settings
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate("/admin")}>
-                Dashboard
+
+              <DropdownMenuItem onClick={() => toggleTheme()}>
+                {theme === "dark" ? "Light" : "Dark"} Theme
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -120,28 +134,30 @@ export default function Topbar() {
                   {user.role === "admin"
                     ? "Admin Panel"
                     : user.role === "driver"
-                      ? "Welcome Driver!"
-                      : user.role === "user"
-                        ? "Welcome User!"
-                        : null}
+                    ? "Welcome Driver!"
+                    : user.role === "user"
+                    ? "Welcome User!"
+                    : null}
                 </div>
               </SheetTitle>
             </SheetHeader>
-            <nav className="p-4 space-y-1">
+            <nav className="p-3 space-y-1">
               {links.map((item) => (
                 <NavLink
                   key={item.path}
                   to={item.path}
                   className={({ isActive }) =>
-                    `block p-3 rounded-md font-medium transition ${
+                    cn(
+                      "group relative flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
                       isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-muted"
-                    }`
+                        ? "bg-accent text-accent-foreground ring-1 ring-border shadow-sm before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-5 before:w-1 before:rounded-full before:bg-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    )
                   }
                   onClick={() => setOpen(false)}
                 >
-                  {item.name}
+                  <item.icon className="mr-3 size-4 shrink-0" />
+                  <span className="truncate">{item.name}</span>
                 </NavLink>
               ))}
             </nav>
