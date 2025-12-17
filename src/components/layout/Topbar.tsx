@@ -21,7 +21,8 @@ import { useAuthStore } from "@/auth/store";
 import { adminLinks, driverLinks, userLinks } from "./constants.ts";
 import { cn } from "@/lib/utils";
 import { useTheme } from "../theme-provider.tsx";
-import { useSwipeable } from "react-swipeable"; 
+import { useSwipeable } from "react-swipeable";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export default function Topbar({
   open,
@@ -34,14 +35,16 @@ export default function Topbar({
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const { setTheme, theme } = useTheme();
+  const isMobile = useIsMobile();
 
+  // Only swipe-to-close inside the Sheet; opening is handled in Layout
   const closeHandlers = useSwipeable({
     onSwipedLeft: () => setOpen(false),
-    // Make it usable on desktop and reliable on mobile
     trackMouse: false,
     delta: 20,
-    touchEventOptions: { passive: false },
+    preventScrollOnSwipe: true,
   });
+
   let links;
   if (user?.role === "admin") {
     links = adminLinks;
@@ -58,7 +61,6 @@ export default function Topbar({
       setTheme("light");
     }
   };
-
 
   return (
     <>
@@ -128,13 +130,14 @@ export default function Topbar({
           </DropdownMenu>
         </div>
       </header>
-      {/* Mobile sheet trigger (place in Topbar; duplicated here for standalone usage) */}
+
       <div className="">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetContent
             side="left"
-            className="p-0 w-full h-svh flex flex-col touch-pan-y" // touch-pan-y lets vertical scroll, JS handles horizontal
-            {...closeHandlers} // apply swipe-to-close
+            // Use dvh so the sheet truly fills the viewport when the URL bar collapses
+            className="p-0 w-full h-dvh flex flex-col touch-pan-y pb-[env(safe-area-inset-bottom)]"
+            {...(isMobile ? closeHandlers : {})}
           >
             <SheetHeader className="border-b h-16 border-border p-4">
               <SheetTitle>
@@ -159,6 +162,7 @@ export default function Topbar({
                 </Link>
               </SheetTitle>
             </SheetHeader>
+
             <nav className="flex-1 overflow-y-auto p-4 space-y-2">
               {links.map((item) => (
                 <NavLink
@@ -179,6 +183,7 @@ export default function Topbar({
                 </NavLink>
               ))}
             </nav>
+
             <div className="p-4 border-t mt-auto">
               <div className="flex items-center gap-3">
                 <Button
