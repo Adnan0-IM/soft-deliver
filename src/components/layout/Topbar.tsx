@@ -117,10 +117,10 @@ export default function Topbar() {
       {/* Mobile sheet trigger (place in Topbar; duplicated here for standalone usage) */}
       <div className="">
         <Sheet open={open} onOpenChange={setOpen}>
-          <SheetContent side="left" className="p-0 w-64">
+          <SheetContent side="left" className="p-0 w-full">
             <SheetHeader className="border-b h-16 border-border p-4">
               <SheetTitle>
-                <div className="flex gap-4 items-center">
+                <Link to={"/"} className="flex gap-4 items-center">
                   <img
                     src="/soft-deliver-icon-white-green.png"
                     alt="soft deliver logo icon"
@@ -134,29 +134,29 @@ export default function Topbar() {
                   {user.role === "admin"
                     ? "Admin Panel"
                     : user.role === "driver"
-                    ? "Welcome Driver!"
-                    : user.role === "user"
-                    ? "Welcome User!"
-                    : null}
-                </div>
+                      ? "Welcome Driver!"
+                      : user.role === "user"
+                        ? "Welcome User!"
+                        : null}
+                </Link>
               </SheetTitle>
             </SheetHeader>
-            <nav className="p-3 space-y-1">
+            <nav className="p-4 space-y-2">
               {links.map((item) => (
                 <NavLink
                   key={item.path}
                   to={item.path}
                   className={({ isActive }) =>
                     cn(
-                      "group relative flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                      "group relative flex items-center rounded-md px-3 py-2 text-base font-medium transition-colors",
                       isActive
                         ? "bg-accent text-accent-foreground ring-1 ring-border shadow-sm before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-5 before:w-1 before:rounded-full before:bg-primary"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted",
                     )
                   }
                   onClick={() => setOpen(false)}
                 >
-                  <item.icon className="mr-3 size-4 shrink-0" />
+                  <item.icon className="mr-3 size-5 shrink-0" />
                   <span className="truncate">{item.name}</span>
                 </NavLink>
               ))}
