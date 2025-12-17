@@ -16,10 +16,10 @@ export default function Layout() {
       <Sidebar />
 
       {/* Main Content */}
-      <div className="flex flex-col md:pl-64 flex-1">
+      <div {...handlers} className="flex flex-col md:pl-64 flex-1">
         <Topbar open={open} setOpen={setOpen} />
 
-        <main {...handlers} className=" overflow-y-auto flex-1">
+        <main className=" overflow-y-auto flex-1">
           <Outlet />
         </main>
       </div>
