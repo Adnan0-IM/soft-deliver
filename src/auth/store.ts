@@ -16,6 +16,8 @@ interface AuthState {
   setToken: (token: string) => void;
   logout: () => void;
   setTestUser: () => void;
+  setAdminTestUser: () => void;
+  setDriverTestUser: () => void;
 }
 
 const loadInitialState = (): Pick<AuthState, "accessToken" | "user"> => {
@@ -46,13 +48,46 @@ export const useAuthStore = create<AuthState>((set) => ({
         id: "test-id",
         email: "test@test.com",
         name: "Test User",
-        role: "admin",
+        role: "user",
         phone: "1234567890",
         location: "Test City",
       },
     });
+
     localStorage.setItem("access_token", token);
     // no window.location.href here; let the component navigate
+  },
+  setAdminTestUser: () => {
+    const token = "test-admin-token";
+    set({
+      accessToken: token,
+      user: {
+        id: "admin-id",
+        email: "adminTest@test.com",
+        name: "Admin Test User",
+        role: "admin",
+        phone: "0987654321",
+        location: "Admin City",
+      },
+    });
+
+    localStorage.setItem("access_token", token);
+  },
+  setDriverTestUser: () => {
+    const token = "test-driver-token";
+    set({
+      accessToken: token,
+      user: {
+        id: "driver-id",
+        email: "driverTest@test.com",
+        name: "Driver Test User",
+        role: "driver",
+        phone: "1122334455",
+        location: "Driver City",
+      },
+    });
+
+    localStorage.setItem("access_token", token);
   },
   logout: () => {
     set({ accessToken: null, user: null });

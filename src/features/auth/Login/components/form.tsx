@@ -43,12 +43,14 @@ export default function LoginForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       console.log(values);
-      useAuthStore.getState().setTestUser();
       if (values.email.includes("admin")) {
+        useAuthStore.getState().setAdminTestUser();
         navigate("/admin/dashboard");
       } else if (values.email.includes("driver")) {
+        useAuthStore.getState().setDriverTestUser();
         navigate("/driver/home");
       } else if (values.email.includes("user")) {
+        useAuthStore.getState().setTestUser();
         navigate("/user/home");
       }
     } catch (error) {
