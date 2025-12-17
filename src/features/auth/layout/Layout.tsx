@@ -1,28 +1,30 @@
-import { Outlet, useNavigate } from "react-router";
-import { Button } from "@/components/ui/button";
+import { Link, Outlet } from "react-router";
 import { ModeToggle } from "@/components/mode-toggle";
 
 export default function AuthLayout() {
-  const navigate = useNavigate();
-
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <header className="sticky top-0 z-40 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
         <div className="mx-auto w-full max-w-7xl flex items-center justify-between px-4 lg:px-6 py-3">
-          <div className="font-semibold tracking-tight">Soft Deliver</div>
+          <Link to={"/"} className="">
+            <img
+              className="dark:hidden h-8"
+              src="/soft-deliver-green.png"
+              alt=""
+            />
+            <img
+              className="hidden dark:block h-8"
+              src="/soft-deliver-white-green.png"
+              alt=""
+            />
+          </Link>
           <div className="flex items-center gap-2">
             <ModeToggle />
-            <Button variant="ghost" size="sm" onClick={() => navigate("/help")}>
-              Help
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => navigate("/")}>
-              Back to Home
-            </Button>
           </div>
         </div>
       </header>
 
-      <main className="flex-1 mx-auto w-full max-w-7xl px-4 lg:px-6 py-4 lg:py-6">
+      <main className="flex-1 grid place-content-center">
         <Outlet />
       </main>
 

@@ -45,11 +45,11 @@ export default function LoginForm() {
       console.log(values);
       useAuthStore.getState().setTestUser();
       if (values.email.includes("admin")) {
-        navigate("/admin");
+        navigate("/admin/dashboard");
       } else if (values.email.includes("driver")) {
-        navigate("/driver");
-      } else {
-        navigate("/user");
+        navigate("/driver/home");
+      } else if (values.email.includes("user")) {
+        navigate("/user/home");
       }
     } catch (error) {
       console.error("Form submission error", error);
@@ -118,7 +118,7 @@ export default function LoginForm() {
                 <Button type="submit" className="w-full">
                   Login
                 </Button>
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full hover:text-white">
                   Login with Google
                 </Button>
               </div>
