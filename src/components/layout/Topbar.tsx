@@ -21,6 +21,7 @@ import { useAuthStore } from "@/auth/store";
 import { adminLinks, driverLinks, userLinks } from "./constants.ts";
 import { cn } from "@/lib/utils";
 import { useTheme } from "../theme-provider.tsx";
+import { useSwipeable } from "react-swipeable"; 
 
 export default function Topbar({
   open,
@@ -34,6 +35,13 @@ export default function Topbar({
   const logout = useAuthStore((s) => s.logout);
   const { setTheme, theme } = useTheme();
 
+  const closeHandlers = useSwipeable({
+    onSwipedLeft: () => setOpen(false),
+    // Make it usable on desktop and reliable on mobile
+    trackMouse: false,
+    delta: 20,
+    touchEventOptions: { passive: false },
+  });
   let links;
   if (user?.role === "admin") {
     links = adminLinks;
@@ -50,6 +58,8 @@ export default function Topbar({
       setTheme("light");
     }
   };
+
+
   return (
     <>
       <header className="h-16 bg-card border-b border-border flex items-center justify-between px-4 md:px-6">
@@ -121,7 +131,11 @@ export default function Topbar({
       {/* Mobile sheet trigger (place in Topbar; duplicated here for standalone usage) */}
       <div className="">
         <Sheet open={open} onOpenChange={setOpen}>
-          <SheetContent side="left" className="p-0 w-full h-svh flex flex-col">
+          <SheetContent
+            side="left"
+            className="p-0 w-full h-svh flex flex-col touch-pan-y" // touch-pan-y lets vertical scroll, JS handles horizontal
+            {...closeHandlers} // apply swipe-to-close
+          >
             <SheetHeader className="border-b h-16 border-border p-4">
               <SheetTitle>
                 <Link to={"/"} className="flex gap-4 items-center">
@@ -169,7 +183,7 @@ export default function Topbar({
               <div className="flex items-center gap-3">
                 <Button
                   variant="outline"
-                  className="flex-1 justify-center gap-2"
+                  className="flex-1 dark:hover:text-white justify-center gap-2"
                   onClick={() => toggleTheme()}
                 >
                   {theme === "dark" ? (
