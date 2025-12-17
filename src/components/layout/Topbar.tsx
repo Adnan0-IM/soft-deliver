@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, Menu } from "lucide-react";
+import { Bell, Menu, LogOut, Moon, Sun } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -121,7 +121,7 @@ export default function Topbar({
       {/* Mobile sheet trigger (place in Topbar; duplicated here for standalone usage) */}
       <div className="">
         <Sheet open={open} onOpenChange={setOpen}>
-          <SheetContent side="left" className="p-0 w-full">
+          <SheetContent side="left" className="p-0 w-full h-svh flex flex-col">
             <SheetHeader className="border-b h-16 border-border p-4">
               <SheetTitle>
                 <Link to={"/"} className="flex gap-4 items-center">
@@ -138,24 +138,24 @@ export default function Topbar({
                   {user.role === "admin"
                     ? "Admin Panel"
                     : user.role === "driver"
-                      ? "Welcome Driver!"
-                      : user.role === "user"
-                        ? "Welcome User!"
-                        : null}
+                    ? "Welcome Driver!"
+                    : user.role === "user"
+                    ? "Welcome User!"
+                    : null}
                 </Link>
               </SheetTitle>
             </SheetHeader>
-            <nav className="p-4 space-y-2">
+            <nav className="flex-1 overflow-y-auto p-4 space-y-2">
               {links.map((item) => (
                 <NavLink
                   key={item.path}
                   to={item.path}
                   className={({ isActive }) =>
                     cn(
-                      "group relative flex items-center rounded-md px-3 py-2 text-base font-medium transition-colors",
+                      "group relative flex items-center rounded-md px-3 py-3 text-base font-medium transition-colors",
                       isActive
                         ? "bg-accent text-accent-foreground ring-1 ring-border shadow-sm before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-5 before:w-1 before:rounded-full before:bg-primary"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted",
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
                     )
                   }
                   onClick={() => setOpen(false)}
@@ -165,6 +165,36 @@ export default function Topbar({
                 </NavLink>
               ))}
             </nav>
+            <div className="p-4 border-t mt-auto">
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  className="flex-1 justify-center gap-2"
+                  onClick={() => toggleTheme()}
+                >
+                  {theme === "dark" ? (
+                    <Sun className="size-4" />
+                  ) : (
+                    <Moon className="size-4" />
+                  )}
+                  <span className="text-sm">
+                    {theme === "dark" ? "Light Mode" : "Dark Mode"}
+                  </span>
+                </Button>
+                <Button
+                  variant="destructive"
+                  className="flex-1 justify-center gap-2"
+                  onClick={() => {
+                    logout();
+                    setOpen(false);
+                    navigate("/auth/login");
+                  }}
+                >
+                  <LogOut className="size-4" />
+                  <span className="text-sm">Logout</span>
+                </Button>
+              </div>
+            </div>
           </SheetContent>
         </Sheet>
       </div>
