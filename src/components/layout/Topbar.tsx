@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, Menu, LogOut, Moon, Sun } from "lucide-react";
+import { Bell, Menu, LogOut, Moon, Sun, Settings } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -102,18 +102,27 @@ export default function Topbar({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-56">
-              <DropdownMenuLabel className="flex flex-col">
-                <span className="font-medium">{user?.name ?? "Admin"}</span>
-                <span className="text-xs text-muted-foreground">
-                  {user?.email ?? "admin@example.com"}
-                </span>
+              <DropdownMenuLabel className=" flex gap-2">
+                <Avatar className="size-8">
+                  <AvatarImage src="/avatar-admin.png" alt="Admin Avatar" />
+                  <AvatarFallback>
+                    {(user?.name?.[0] ?? "A").toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                  <span className="font-medium">{user?.name ?? "Admin"}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {user?.email ?? "admin@example.com"}
+                  </span>
+                </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => navigate("/admin/settings")}>
-                Settings
+                <Settings /> Settings
               </DropdownMenuItem>
 
               <DropdownMenuItem onClick={() => toggleTheme()}>
+                {theme === "dark" ? <Sun /> : <Moon />}{" "}
                 {theme === "dark" ? "Light" : "Dark"} Theme
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -124,7 +133,7 @@ export default function Topbar({
                 }}
                 className="text-destructive focus:text-destructive"
               >
-                Logout
+              <LogOut/>  Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -172,7 +181,7 @@ export default function Topbar({
                     cn(
                       "group relative flex items-center rounded-md px-3 py-3 text-base font-medium transition-colors",
                       isActive
-                        ? "bg-accent text-accent-foreground ring-1 ring-border shadow-sm before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-5 before:w-1 before:rounded-full before:bg-primary"
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground ring-1 ring-border shadow-sm before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-5 before:w-1 before:rounded-full before:bg-accent dark:before:bg-primary"
                         : "text-muted-foreground hover:text-foreground hover:bg-muted"
                     )
                   }

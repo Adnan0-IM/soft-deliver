@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { Link, NavLink } from "react-router";
 import { adminLinks, driverLinks, userLinks } from "./constants.ts";
 import { useAuthStore } from "@/auth/store.ts";
 import { cn } from "@/lib/utils";
@@ -15,7 +15,7 @@ export default function Sidebar() {
     <>
       {/* Desktop sidebar */}
       <aside className="hidden md:flex w-64 bg-card border-r border-border h-full fixed left-0 top-0 flex-col">
-        <div className="p-4  h-16 border-b border-border">
+        <Link to={"/"} className="p-4  h-16 border-b border-border">
           <img
             className="dark:hidden h-8"
             src="/soft-deliver-green.png"
@@ -26,7 +26,7 @@ export default function Sidebar() {
             src="/soft-deliver-white-green.png"
             alt="soft deliver logo"
           />
-        </div>
+        </Link>
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {links.map((item) => (
             <NavLink
@@ -36,7 +36,7 @@ export default function Sidebar() {
                 cn(
                   "group relative flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-accent text-accent-foreground ring-1 ring-border shadow-sm before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-5 before:w-1 before:rounded-full before:bg-primary"
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground ring-1 ring-border shadow-sm before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-5 before:w-1 before:rounded-full before:bg-accent dark:before:bg-primary"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 )
               }
