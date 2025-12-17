@@ -2,7 +2,7 @@ import { Outlet } from "react-router";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 
-export default function AdminLayout() {
+export default function Layout() {
   return (
     <div className="flex h-screen overflow-hidden ">
       {/* Sidebar */}
@@ -12,7 +12,7 @@ export default function AdminLayout() {
       <div className="flex flex-col md:pl-58 flex-1">
         <Topbar />
 
-        <main className="p-6 overflow-y-auto flex-1">
+        <main className=" overflow-y-auto flex-1">
           <Outlet />
         </main>
       </div>

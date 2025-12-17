@@ -9,7 +9,8 @@ import Login from "@/features/auth/Login/pages/Login";
 import ForgetPassword from "@/features/auth/reset/forget";
 import ResetPassword from "@/features/auth/reset/reset";
 
-import AdminLayout from "@/features/Admin/layout/Layout";
+import Layout from "@/components/layout/Layout";
+
 import Dashboard from "@/features/Admin/pages/Dashboard";
 import Users from "@/features/Admin/pages/Users";
 import UserPage from "@/features/Admin/pages/User";
@@ -21,7 +22,6 @@ import ManagePayments from "@/features/Admin/pages/ManagePayments";
 import OrderPage from "@/features/Admin/pages/Order";
 import Settings from "@/features/Admin/pages/Settings";
 
-import UserLayout from "@/features/User/layout/Layout";
 import UserDashboard from "@/features/User/pages/Dashboard";
 import RequestRide from "@/features/User/pages/RequestRide";
 import RequestDelivery from "@/features/User/pages/RequestDelivery";
@@ -31,7 +31,6 @@ import Notifications from "@/features/User/pages/Notifications";
 import Payment from "@/features/User/pages/Payment";
 import UserProfile from "@/features/User/pages/Profile";
 
-import DriverLayout from "@/features/Driver/layout/Layout";
 import DriverDashboard from "@/features/Driver/pages/Dashboard";
 import Jobs from "@/features/Driver/pages/Jobs";
 import JobPage from "@/features/Driver/pages/Job";
@@ -68,12 +67,12 @@ export const AppRouter = () => {
             element={
               <ProtectedRoute>
                 <RoleRoute roles={["user", "admin"]}>
-                  <UserLayout />
+                  <Layout />
                 </RoleRoute>
               </ProtectedRoute>
             }
           >
-            <Route index element={<UserDashboard />} />
+            <Route path="home" element={<UserDashboard />} />
             <Route path="request-ride" element={<RequestRide />} />
             <Route path="request-delivery" element={<RequestDelivery />} />
             <Route path="track/:orderId" element={<TrackOrderAndRide />} />
@@ -88,12 +87,12 @@ export const AppRouter = () => {
             element={
               <ProtectedRoute>
                 <RoleRoute roles={["driver", "admin"]}>
-                  <DriverLayout />
+                  <Layout />
                 </RoleRoute>
               </ProtectedRoute>
             }
           >
-            <Route index element={<DriverDashboard />} />
+            <Route path="home" element={<DriverDashboard />} />
             <Route path="jobs" element={<Jobs />} />
             <Route path="job/:jobId" element={<JobPage />} />
             <Route path="history" element={<DriverHistory />} />
@@ -108,12 +107,12 @@ export const AppRouter = () => {
             element={
               <ProtectedRoute>
                 <RoleRoute roles={["admin"]}>
-                  <AdminLayout />
+                  <Layout />
                 </RoleRoute>
               </ProtectedRoute>
             }
           >
-            <Route index element={<Dashboard />} />
+            <Route path="dashboard" element={<Dashboard />} />
             <Route path="users" element={<Users />} />
             <Route path="user/:id" element={<UserPage />} />
             <Route path="drivers" element={<Drivers />} />
