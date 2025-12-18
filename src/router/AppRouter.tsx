@@ -75,7 +75,7 @@ export const AppRouter = () => {
             <Route path="home" element={<UserDashboard />} />
             <Route path="request-ride" element={<RequestRide />} />
             <Route path="request-delivery" element={<RequestDelivery />} />
-            <Route path="track/:orderId" element={<TrackOrderAndRide />} />
+            <Route path="receipt/:orderId" element={<TrackOrderAndRide />} />
             <Route path="history" element={<UserHistory />} />
             <Route path="payments" element={<Payment />} />
             <Route path="notifications" element={<Notifications />} />

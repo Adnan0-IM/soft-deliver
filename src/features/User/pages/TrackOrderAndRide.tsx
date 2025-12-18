@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Star } from "lucide-react";
 
 type TrackStatus =
   | "searching"
@@ -24,14 +25,14 @@ const statusSequence: TrackStatus[] = [
 const initialUserLocation: LatLng = { lat: 37.773972, lng: -122.431297 }; // Sample
 const initialDriverLocation: LatLng = { lat: 37.768, lng: -122.44 };
 
-const TrackOrderAndRide: React.FC = () => {
+const TrackOrderAndRide = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   // State
   const [statusIndex, setStatusIndex] = useState(0);
   const [driverLocation, setDriverLocation] = useState<LatLng | null>(
-    initialDriverLocation
+    initialDriverLocation,
   );
   const [userLocation] = useState<LatLng>(initialUserLocation);
   const [distanceKm, setDistanceKm] = useState<number | null>(null);
@@ -126,7 +127,7 @@ const TrackOrderAndRide: React.FC = () => {
 
   const handleEndAndRate = () => {
     // TODO: send rating to backend
-    navigate("/user");
+    navigate("/user/home");
   };
 
   const StatusBox: React.FC = () => {
@@ -134,12 +135,12 @@ const TrackOrderAndRide: React.FC = () => {
       currentStatus === "searching"
         ? "Searching for driver"
         : currentStatus === "accepted"
-        ? "Driver accepted"
-        : currentStatus === "arriving"
-        ? "Driver coming"
-        : currentStatus === "in_transit"
-        ? "In transit"
-        : "Completed";
+          ? "Driver accepted"
+          : currentStatus === "arriving"
+            ? "Driver coming"
+            : currentStatus === "in_transit"
+              ? "In transit"
+              : "Completed";
     return (
       <Card className="mb-3 bg-muted/40">
         <CardContent className="p-3">
@@ -163,15 +164,15 @@ const TrackOrderAndRide: React.FC = () => {
   );
 
   return (
-    <div className="container max-w-5xl mx-auto py-6">
+    <div className="container px-4 lg:px-8 mx-auto py-6">
       <h2 className="text-2xl font-semibold mb-2">Tracking {id}</h2>
 
       <StatusBox />
       <StatusProgress />
 
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">Live Map</CardTitle>
+      <Card className="gap-4">
+        <CardHeader className="">
+          <CardTitle className="text-sm sm:text-base">Live Map</CardTitle>
         </CardHeader>
         <CardContent>
           <div
@@ -183,7 +184,7 @@ const TrackOrderAndRide: React.FC = () => {
             Driver:{" "}
             {driverLocation
               ? `${driverLocation.lat.toFixed(5)}, ${driverLocation.lng.toFixed(
-                  5
+                  5,
                 )}`
               : "—"}{" "}
             | User:{" "}
@@ -193,9 +194,9 @@ const TrackOrderAndRide: React.FC = () => {
       </Card>
 
       <div className="grid gap-3 mt-4 md:grid-cols-2">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Driver</CardTitle>
+        <Card className="gap-4">
+          <CardHeader className="">
+            <CardTitle className=" text-sm sm:text-base">Driver</CardTitle>
           </CardHeader>
           <CardContent className="text-sm">
             {driverInfo ? (
@@ -216,9 +217,9 @@ const TrackOrderAndRide: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Trip</CardTitle>
+        <Card className="gap-4">
+          <CardHeader className="">
+            <CardTitle className="text-sm sm:text-base">Trip</CardTitle>
           </CardHeader>
           <CardContent className="text-sm">
             <div>Distance: {distanceKm ?? "—"} km</div>
@@ -229,26 +230,30 @@ const TrackOrderAndRide: React.FC = () => {
       </div>
 
       {currentStatus === "completed" && (
-        <Card className="mt-4">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Rate your experience</CardTitle>
+        <Card className="mt-4 gap-4">
+          <CardHeader className="">
+            <CardTitle className="text-sm sm:text-base">
+              Rate your experience
+            </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex flex-col sm:flex-row items-center gap-4">
             <div className="flex items-center gap-2">
               {[1, 2, 3, 4, 5].map((n) => (
                 <Button
                   key={n}
+                  className="border-0 shadow-none px-2"
                   variant={rating >= n ? "default" : "outline"}
-                  size="sm"
+                  size="icon"
                   onClick={() => setRating(n)}
                 >
-                  {n}★
+                  <Star fill="gold" className="text-amber-300" />
                 </Button>
               ))}
-              <Button className="ml-auto" onClick={handleEndAndRate}>
-                Submit & Close
-              </Button>
             </div>
+
+            <Button className="sm:ml-auto" onClick={handleEndAndRate}>
+              Submit & Close
+            </Button>
           </CardContent>
         </Card>
       )}
