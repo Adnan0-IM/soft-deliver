@@ -8,6 +8,8 @@ interface UserPayload {
   role: "admin" | "user" | "driver";
   phone?: string;
   location?: string;
+  photoUrl?: string;
+  photoFile?: string;
 }
 
 interface AuthState {

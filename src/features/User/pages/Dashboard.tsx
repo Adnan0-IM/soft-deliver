@@ -51,7 +51,7 @@ const Dashboard = () => {
         <h2 className="text-2xl font-bold mb-4">Wallet Summary</h2>
         <Card>
           <CardContent className="p-4">
-            <p className="text-lg">Balance: $0.00</p>
+            <p className="text-lg">Balance: ₦0.00</p>
           </CardContent>
         </Card>
       </section>

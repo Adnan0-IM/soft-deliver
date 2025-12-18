@@ -14,9 +14,7 @@ export default function Profile() {
   const [email, setEmail] = useState(user?.email || "");
   const [phone, setPhone] = useState(user?.phone || "");
   const [location, setLocation] = useState(user?.location || "");
-  const [photoUrl, setPhotoUrl] = useState<string>(
-    (user as any)?.photoUrl || (user as any)?.avatar || ""
-  );
+  const [photoUrl, setPhotoUrl] = useState<string>(user?.photoUrl || "");
   const [photoFile, setPhotoFile] = useState<File | null>(null);
 
   const [saving, setSaving] = useState(false);
