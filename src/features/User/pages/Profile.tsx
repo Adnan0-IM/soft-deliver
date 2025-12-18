@@ -33,6 +33,14 @@ export default function Profile() {
     setSaving(true);
     setSaved(false);
     setError(null);
+    console.log("Saving profile", {
+      name,
+      email,
+      phone,
+      location,
+      photoFile,
+      photoUrl,
+    });
     try {
       let res;
       if (photoFile) {
@@ -63,38 +71,51 @@ export default function Profile() {
   };
 
   return (
-    <div className="container px-4 lg:px-8 py-4 grid gap-4">
+    <div className="container px-4 lg:px-8 py-4 grid gap-4 max-w-3xl">
       <h1 className="text-2xl font-semibold">Profile</h1>
 
       {error && (
-        <div className="rounded-md border border-destructive/20 bg-destructive/10 text-destructive px-3 py-2">
+        <div
+          className="rounded-md border border-destructive/20 bg-destructive/10 text-destructive px-3 py-2"
+          role="status"
+          aria-live="polite"
+        >
           {error}
         </div>
       )}
       {saved && (
-        <div className="rounded-md border border-emerald-400/30 bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 px-3 py-2">
+        <div
+          className="rounded-md border border-emerald-400/30 bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 px-3 py-2"
+          role="status"
+          aria-live="polite"
+        >
           Saved successfully.
         </div>
       )}
 
-      <form onSubmit={onSave} className="grid gap-3 max-w-2xl">
+      <form onSubmit={onSave} className="grid gap-3 w-full max-w-2xl">
         {/* Photo */}
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Photo</CardTitle>
           </CardHeader>
-          <CardContent className="flex items-center gap-4 py-4">
+          <CardContent className="flex flex-col sm:flex-row items-center sm:items-start gap-4 py-4">
             <img
               src={photoUrl || ""}
               alt="Profile"
               onError={(e) =>
                 ((e.target as HTMLImageElement).style.display = "none")
               }
-              className="size-24 rounded-full border object-cover"
+              className="size-20 sm:size-24 rounded-full border object-cover"
             />
-            <div className="grid gap-1.5 text-sm">
+            <div className="grid gap-1.5 text-sm w-full sm:w-auto">
               <Label>Upload new photo</Label>
-              <Input type="file" accept="image/*" onChange={onPhotoChange} />
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={onPhotoChange}
+                className="w-full sm:w-[260px]"
+              />
               <div className="text-xs text-muted-foreground">
                 Accepted formats: JPG/PNG. Max ~5MB (server may enforce).
               </div>
@@ -107,7 +128,7 @@ export default function Profile() {
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Details</CardTitle>
           </CardHeader>
-          <CardContent className="grid gap-4 py-4">
+          <CardContent className="grid gap-4 py-4 sm:grid-cols-2">
             <div className="grid gap-2">
               <Label htmlFor="name">Name</Label>
               <Input
@@ -147,7 +168,7 @@ export default function Profile() {
                 placeholder="City, Country"
               />
             </div>
-            <div className="flex gap-2 mt-2">
+            <div className="flex gap-2 mt-2 sm:col-span-2">
               <Button type="submit" disabled={saving} aria-busy={saving}>
                 {saving ? "Saving…" : "Save"}
               </Button>

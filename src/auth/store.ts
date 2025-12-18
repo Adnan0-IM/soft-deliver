@@ -9,7 +9,7 @@ interface UserPayload {
   phone?: string;
   location?: string;
   photoUrl?: string;
-  photoFile?: string;
+  photoFile?: Pick<File, "name" | "size" | "type">;
 }
 
 interface AuthState {
@@ -53,6 +53,13 @@ export const useAuthStore = create<AuthState>((set) => ({
         role: "user",
         phone: "1234567890",
         location: "Test City",
+        photoUrl:
+          "blob:http://localhost:5173/0b213cb7-826b-4a02-8a5b-7d9bdbc0d0f3",
+        photoFile: {
+          name: "cap-mockup2.jpg ",
+          size: 195861,
+          type: "image/jpeg",
+        },
       },
     });
 
@@ -70,6 +77,13 @@ export const useAuthStore = create<AuthState>((set) => ({
         role: "admin",
         phone: "0987654321",
         location: "Admin City",
+        photoUrl:
+          "blob:http://localhost:5173/0b213cb7-826b-4a02-8a5b-7d9bdbc0d0f3",
+        photoFile: {
+          name: "cap-mockup2.jpg ",
+          size: 195861,
+          type: "image/jpeg",
+        },
       },
     });
 
@@ -86,6 +100,13 @@ export const useAuthStore = create<AuthState>((set) => ({
         role: "driver",
         phone: "1122334455",
         location: "Driver City",
+        photoUrl:
+          "blob:http://localhost:5173/0b213cb7-826b-4a02-8a5b-7d9bdbc0d0f3",
+        photoFile: {
+          name: "cap-mockup2.jpg ",
+          size: 195861,
+          type: "image/jpeg",
+        },
       },
     });
 
