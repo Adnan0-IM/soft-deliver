@@ -1,6 +1,6 @@
-import { Wallet } from "@/features/User/components/payment-wallet";
-import { Cards } from "@/features/User/components/payment-cards";
-import { Logs } from "@/features/User/components/payment-logs";
+import { Wallet } from "@/features/User/components/payments/payment-wallet";
+import { Cards } from "@/features/User/components/payments/payment-cards";
+import { Logs } from "@/features/User/components/payments/payment-logs";
 
 const Payment = () => {
   return (
